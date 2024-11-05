@@ -57,7 +57,9 @@ const FeatureCard = ({ title, description, image, index }) => {
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             {description.map((item, index) => (
-              <li key={index} className="mb-3">{item}</li>
+              <li key={index} className="mb-3">
+                {item}
+              </li>
             ))}
           </motion.ul>
         </div>
@@ -75,9 +77,9 @@ const WhyUs = () => {
         "Expert pharmacists dedicated to your unique health profile",
         "Tailored advice and care plans for your lifestyle",
         "Focused approach to achieve your wellness goals faster",
-        "Prioritized individual well-being for your peace of mind"
+        "Prioritized individual well-being for your peace of mind",
       ],
-      image: "src/assets/img1.png",
+      image: "public/assets/img1.png",
     },
     {
       title: "Cutting-edge Technology",
@@ -85,9 +87,9 @@ const WhyUs = () => {
         "State-of-the-art tech for unparalleled accuracy",
         "Advanced systems to maximize your safety",
         "Intuitive health tracking tools for informed decisions",
-        "Seamless health data integration for comprehensive care"
+        "Seamless health data integration for comprehensive care",
       ],
-      image: "src/assets/tech1.png",
+      image: "public/assets/tech1.png",
     },
     {
       title: "Comprehensive Health Services",
@@ -95,9 +97,9 @@ const WhyUs = () => {
         "Full spectrum of services under one roof",
         "Proactive health protection with vaccinations and screenings",
         "Expert medication therapy management",
-        "Holistic approach for long-term health success"
+        "Holistic approach for long-term health success",
       ],
-      image: "src/assets/healthserv.png",
+      image: "public/assets/healthserv.png",
     },
     {
       title: "Community Wellness Hub",
@@ -105,9 +107,9 @@ const WhyUs = () => {
         "Regular workshops on latest health trends",
         "Support for local health initiatives",
         "Access to cutting-edge health innovations",
-        "Join a community supporting your wellness journey"
+        "Join a community supporting your wellness journey",
       ],
-      image: "src/assets/commwell.png",
+      image: "public/assets/commwell.png",
     },
   ];
 

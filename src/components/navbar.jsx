@@ -222,7 +222,7 @@ const Navbar = () => {
                   >
                     <img
                       className="h-full w-auto brightness-0 invert object-contain object-center min-w-[120px] max-w-[160px] sm:max-w-[180px] md:max-w-[220px]"
-                      src="src\assets\logo1.png"
+                      src="public\assets\logo1.png"
                       alt="Pharmacy Logo"
                       style={{ imageRendering: "crisp-edges" }}
                     />
