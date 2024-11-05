@@ -79,7 +79,7 @@ const WhyUs = () => {
         "Focused approach to achieve your wellness goals faster",
         "Prioritized individual well-being for your peace of mind",
       ],
-      image: "public/assets/img1.png",
+      image: "/assets/img1.png",
     },
     {
       title: "Cutting-edge Technology",
@@ -89,7 +89,7 @@ const WhyUs = () => {
         "Intuitive health tracking tools for informed decisions",
         "Seamless health data integration for comprehensive care",
       ],
-      image: "public/assets/tech1.png",
+      image: "/assets/tech1.png",
     },
     {
       title: "Comprehensive Health Services",
@@ -99,7 +99,7 @@ const WhyUs = () => {
         "Expert medication therapy management",
         "Holistic approach for long-term health success",
       ],
-      image: "public/assets/healthserv.png",
+      image: "/assets/healthserv.png",
     },
     {
       title: "Community Wellness Hub",
@@ -109,7 +109,7 @@ const WhyUs = () => {
         "Access to cutting-edge health innovations",
         "Join a community supporting your wellness journey",
       ],
-      image: "public/assets/commwell.png",
+      image: "/assets/commwell.png",
     },
   ];
 
