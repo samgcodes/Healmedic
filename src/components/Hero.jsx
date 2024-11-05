@@ -83,7 +83,7 @@ const Hero = () => {
           <div className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-12">
             <motion.img
               animate={bounceAnimation}
-              src="/src/assets/heroimg.png"
+              src="/public/assets/heroimg.png"
               alt="Modern Pharmacy"
               className="max-w-[240px] md:max-w-[320px] lg:max-w-[400px] object-contain"
             />
