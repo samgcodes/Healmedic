@@ -1,0 +1,77 @@
+/**
+ * Common styles for the HealMedic application
+ * 
+ * This file contains reusable Tailwind CSS classes using @apply directive
+ * to maintain consistent styling across the application.
+ */
+
+@layer components {
+  /* Button styles */
+  .btn {
+    @apply inline-block font-body font-bold rounded-full transition-all duration-300 transform;
+  }
+
+  .btn-primary {
+    @apply btn bg-[#9a77f6] text-white hover:bg-opacity-90 px-8 py-3 shadow-md hover:shadow-lg hover:-translate-y-1;
+  }
+
+  .btn-secondary {
+    @apply btn bg-white text-[#9a77f6] hover:bg-opacity-95 px-8 py-3 shadow-md hover:shadow-lg hover:-translate-y-1;
+  }
+
+  .btn-outline {
+    @apply btn bg-transparent border-2 border-white hover:bg-white hover:text-[#9a77f6] px-8 py-3;
+  }
+
+  /* Typography */
+  .heading-1 {
+    @apply font-title text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight;
+  }
+
+  .heading-2 {
+    @apply font-title text-4xl md:text-5xl font-bold;
+  }
+
+  .heading-3 {
+    @apply font-title text-3xl font-bold;
+  }
+
+  .body-large {
+    @apply font-body text-lg md:text-xl lg:text-2xl leading-relaxed;
+  }
+
+  .body-regular {
+    @apply font-body text-base leading-relaxed;
+  }
+
+  /* Container styles */
+  .container-narrow {
+    @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-wide {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-white rounded-2xl shadow-xl overflow-hidden;
+  }
+
+  .card-body {
+    @apply p-6 md:p-8;
+  }
+
+  /* Section styles */
+  .section {
+    @apply py-16 md:py-24;
+  }
+
+  .section-light {
+    @apply section bg-[#FDF8EC];
+  }
+
+  .section-primary {
+    @apply section bg-[#9a77f6] text-white;
+  }
+}
