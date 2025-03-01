@@ -77,25 +77,7 @@ export interface Testimonial {
   rating?: number;
 }
 
-/**
- * Tech feature type for innovation spotlight
- */
-export interface TechFeature {
-  title: string;
-  description: string;
-  details: string[];
-  icon?: string;
-}
-
-/**
- * Hotspot type for 3D model
- */
-export interface Hotspot {
-  x: number;
-  y: number;
-  title: string;
-  description: string;
-}
+// Tech feature and hotspot types have been removed as they are no longer used
 
 /**
  * FAQ item type

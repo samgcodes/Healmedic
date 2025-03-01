@@ -3,8 +3,6 @@ import {
   Metric,
   ExperienceComparison,
   Testimonial,
-  TechFeature,
-  Hotspot,
 } from "../types";
 
 /**
@@ -228,62 +226,4 @@ export const TESTIMONIALS: Testimonial[] = [
   },
 ];
 
-/**
- * Technology features data
- */
-export const TECH_FEATURES: TechFeature[] = [
-  {
-    title: "Safety",
-    description: "Triple Verification System",
-    details: [
-      "AI-powered image recognition",
-      "Pharmacist expert review",
-      "Barcode confirmation scan",
-    ],
-    icon: "🛡️",
-  },
-  {
-    title: "Efficiency",
-    description: "Smart Workflow Optimization",
-    details: [
-      "Predictive inventory management",
-      "Automated dispensing systems",
-      "Priority-based processing",
-    ],
-    icon: "⚡",
-  },
-  {
-    title: "Integration",
-    description: "Connected Health Ecosystem",
-    details: [
-      "Seamless EHR/EMR integration",
-      "Doctor-pharmacy direct communication",
-      "Insurance real-time verification",
-    ],
-    icon: "🔄",
-  },
-];
-
-/**
- * 3D model hotspots data
- */
-export const TECH_HOTSPOTS: Hotspot[] = [
-  {
-    x: 20,
-    y: 30,
-    title: "Automated Dispensing",
-    description: "99.99% accuracy with triple verification",
-  },
-  {
-    x: 60,
-    y: 40,
-    title: "Robotic Sorting",
-    description: "Handles 500+ prescriptions per hour",
-  },
-  {
-    x: 80,
-    y: 70,
-    title: "Safety Scanner",
-    description: "Checks for 25,000+ potential interactions",
-  },
-];
+// Technology features and hotspots have been removed as they are no longer used
