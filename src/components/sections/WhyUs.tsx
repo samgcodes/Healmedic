@@ -9,7 +9,7 @@ import {
   WELLNESS_PROGRAMS,
   PET_MEDICATION_SERVICES,
 } from "../../constants/whyUsData";
-import { JourneyStep, Metric, Testimonial } from "../../types";
+// Types are imported in whyUsData.ts, no need to re-import them here
 
 /**
  * Animation variants
