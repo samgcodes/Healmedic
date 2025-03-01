@@ -227,7 +227,7 @@ const Hero: React.FC<HeroProps> = ({
           <div className="w-full md:w-3/5 z-10 space-y-fluid-4 mt-6 md:mt-0 px-fluid-2 md:pl-fluid-16">
             <div className="text-center md:text-left mx-auto md:mx-0 max-w-2xl">
               <h1 className="font-title font-bold tracking-tight">
-                <span className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl">
+                <span className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl">
                   Pharmacy
                 </span>{" "}
                 <div className="inline-block w-full relative overflow-hidden h-[90px] xs:h-[100px] sm:h-[110px] md:h-[130px] text-fluid-4xl sm:text-fluid-5xl">
