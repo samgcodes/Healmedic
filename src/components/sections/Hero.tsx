@@ -53,6 +53,85 @@ const animations: HeroAnimations = {
 };
 
 /**
+ * MorphingText component for smooth text transitions
+ */
+interface MorphingTextProps {
+  text: string;
+  className?: string;
+}
+
+const MorphingText: React.FC<MorphingTextProps> = ({
+  text,
+  className = "",
+}) => {
+  // Split text into individual characters for animation
+  const characters = Array.from(text);
+
+  return (
+    <div className={`flex ${className}`}>
+      {characters.map((char, index) => (
+        <motion.span
+          key={`${char}-${index}`}
+          initial={{ opacity: 0, y: 20, scale: 0.8 }}
+          animate={{
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            transition: {
+              duration: 0.4,
+              delay: index * 0.04,
+              ease: [0.2, 0.65, 0.3, 0.9], // Custom easing for smooth morphing effect
+            },
+          }}
+          exit={{
+            opacity: 0,
+            y: -20,
+            scale: 0.8,
+            filter: "blur(8px)",
+            transition: {
+              duration: 0.3,
+              delay: index * 0.02,
+              ease: "easeInOut",
+            },
+          }}
+          className="inline-block origin-center"
+          style={{
+            display: char === " " ? "inline-block" : "inline-block",
+            minWidth: char === " " ? "0.5em" : "auto",
+            position: "relative",
+          }}
+        >
+          {char === " " ? "\u00A0" : char}
+          <motion.div
+            className="absolute bottom-0 left-0 right-0 h-[2px] bg-white"
+            initial={{ scaleX: 0, opacity: 0 }}
+            animate={{
+              scaleX: 1,
+              opacity: 0.5,
+              transition: {
+                duration: 0.3,
+                delay: index * 0.04 + 0.2,
+                ease: "easeOut",
+              },
+            }}
+            exit={{
+              scaleX: 0,
+              opacity: 0,
+              transition: {
+                duration: 0.2,
+                delay: index * 0.02,
+                ease: "easeIn",
+              },
+            }}
+            style={{ originX: 0 }}
+          />
+        </motion.span>
+      ))}
+    </div>
+  );
+};
+
+/**
  * Hero component props
  */
 interface HeroProps {
@@ -148,23 +227,26 @@ const Hero: React.FC<HeroProps> = ({
           <div className="w-full md:w-3/5 z-10 space-y-fluid-4 mt-6 md:mt-0 px-fluid-2 md:pl-fluid-16">
             <div className="text-center md:text-left mx-auto md:mx-0 max-w-2xl">
               <h1 className="font-title font-bold tracking-tight">
-                <span className="text-fluid-5xl sm:text-fluid-6xl">
+                <span className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl">
                   Pharmacy
                 </span>{" "}
-                <span className="inline-block w-full relative overflow-hidden h-[80px] xs:h-[90px] sm:h-[100px] md:h-[120px] text-fluid-3xl sm:text-fluid-4xl">
+                <div className="inline-block w-full relative overflow-hidden h-[90px] xs:h-[100px] sm:h-[110px] md:h-[130px] text-fluid-4xl sm:text-fluid-5xl">
                   <AnimatePresence mode="wait">
-                    <motion.span
+                    <motion.div
                       key={currentPhrase}
                       className="absolute mt-2 left-0 right-0 block"
-                      initial={animations.phraseAnimation.initial}
-                      animate={animations.phraseAnimation.animate}
-                      exit={animations.phraseAnimation.exit}
-                      transition={animations.phraseAnimation.transition}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3 }}
                     >
-                      {phrases[currentPhrase]}
-                    </motion.span>
+                      <MorphingText
+                        text={phrases[currentPhrase]}
+                        className="justify-center md:justify-start"
+                      />
+                    </motion.div>
                   </AnimatePresence>
-                </span>
+                </div>
               </h1>
               <p className="font-body text-fluid-lg md:text-fluid-xl mt-6 mb-8 opacity-90 max-w-xl leading-relaxed relative z-10">
                 <span className="bg-[#8a67e6] px-2 py-1 rounded-lg">
@@ -243,7 +325,7 @@ const Hero: React.FC<HeroProps> = ({
                 animate={animations.bounceAnimation}
                 src={heroImage}
                 alt="Modern Pharmacy"
-                className="w-[75%] xs:w-[70%] sm:w-[65%] md:w-[65%] lg:w-[70%] max-w-[400px] mx-auto object-contain relative z-10"
+                className="w-[50%] xs:w-[45%] sm:w-[40%] md:w-[65%] lg:w-[70%] max-w-[400px] mx-auto object-contain relative z-10"
                 loading="lazy"
                 width="400"
                 height="400"
