@@ -2,11 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ctaData } from "../../constants/ctaData";
-import {
-  FadeIn,
-  AnimatedButton,
-  SectionTitle,
-} from "../utils/AnimationComponents";
+import { FadeIn, AnimatedButton } from "../utils/AnimationComponents";
 
 /**
  * Call To Action Section Component

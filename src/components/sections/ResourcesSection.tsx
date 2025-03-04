@@ -37,7 +37,6 @@ const getArticleIcon = (title: string, size = 64) => {
 interface ArticleCardProps {
   title: string;
   excerpt: string;
-  image: string;
   link: string;
   index: number;
 }
@@ -45,7 +44,6 @@ interface ArticleCardProps {
 const ArticleCard: React.FC<ArticleCardProps> = ({
   title,
   excerpt,
-  image,
   link,
   index,
 }) => {
@@ -106,7 +104,6 @@ const ResourcesSection: React.FC = () => {
               key={article.title}
               title={article.title}
               excerpt={article.excerpt}
-              image={article.image}
               link={article.link}
               index={index}
             />

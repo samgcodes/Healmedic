@@ -61,7 +61,7 @@ const WhyChooseSection: React.FC = () => {
         </FadeIn>
 
         <StaggeredList className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {whyChooseData.points.map((point, index) => (
+          {whyChooseData.points.map((point) => (
             <div
               key={point.title}
               className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow duration-300 h-full"
