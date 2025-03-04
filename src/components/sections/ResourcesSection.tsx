@@ -99,15 +99,19 @@ const ResourcesSection: React.FC = () => {
         </FadeIn>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          {resourcesData.articles.map((article, index) => (
-            <ArticleCard
-              key={article.title}
-              title={article.title}
-              excerpt={article.excerpt}
-              link={article.link}
-              index={index}
-            />
-          ))}
+          {resourcesData.articles.map((article, index) => {
+            // Destructure to exclude image property
+            const { title, excerpt, link } = article;
+            return (
+              <ArticleCard
+                key={title}
+                title={title}
+                excerpt={excerpt}
+                link={link}
+                index={index}
+              />
+            );
+          })}
         </div>
 
         <div className="text-center">

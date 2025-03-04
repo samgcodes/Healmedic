@@ -49,7 +49,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 }) => {
   return (
     <motion.div
-      className={`service-card rounded-xl p-4 cursor-pointer transition-all duration-300 border-2 ${
+      className={`service-card rounded-xl p-3 md:p-4 cursor-pointer transition-all duration-300 border-2 ${
         isActive
           ? "bg-primary text-white shadow-lg border-primary"
           : "bg-white text-gray-800 hover:shadow-md border-gray-200 hover:border-primary"
@@ -64,18 +64,18 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       whileHover={{ y: -5 }}
     >
       <div className="flex flex-col items-center text-center">
-        <div className="mb-3">
+        <div className="mb-2 md:mb-3">
           {/* Create a clone of the icon with the appropriate color */}
           <div className={isActive ? "text-white" : "text-primary"}>
             {React.cloneElement(
-              getCategoryIcon(category.title, 40) as React.ReactElement,
+              getCategoryIcon(category.title, 32) as React.ReactElement,
               {
                 color: isActive ? "#ffffff" : "#9a77f6",
               }
             )}
           </div>
         </div>
-        <h3 className="text-lg font-bold">{category.title}</h3>
+        <h3 className="text-sm md:text-lg font-bold">{category.title}</h3>
       </div>
     </motion.div>
   );
@@ -100,17 +100,19 @@ const ServicesSection: React.FC = () => {
           </p>
         </FadeIn>
 
-        {/* Service Categories */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          {servicesData.categories.map((category, index) => (
-            <ServiceCard
-              key={category.title}
-              category={category}
-              isActive={activeCategory === index}
-              onClick={() => setActiveCategory(index)}
-              index={index}
-            />
-          ))}
+        {/* Service Categories - Horizontal scrollable on mobile */}
+        <div className="mb-12 overflow-x-auto pb-4 -mx-4 px-4 md:overflow-visible md:pb-0 md:mx-0 md:px-0">
+          <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-6 min-w-max md:min-w-0">
+            {servicesData.categories.map((category, index) => (
+              <ServiceCard
+                key={category.title}
+                category={category}
+                isActive={activeCategory === index}
+                onClick={() => setActiveCategory(index)}
+                index={index}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Service Details */}
@@ -121,14 +123,39 @@ const ServicesSection: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="bg-[#f8f4ff] rounded-2xl p-8 mb-12"
+            className="bg-[#f8f4ff] rounded-2xl p-6 md:p-8 mb-12"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              {/* Mobile: Icon first, then content */}
+              <div className="flex justify-center md:hidden order-first mb-6">
+                <motion.div
+                  animate={{
+                    scale: [1, 1.05, 1],
+                  }}
+                  transition={{
+                    duration: 5,
+                    repeat: Infinity,
+                    repeatType: "reverse",
+                  }}
+                  className="relative"
+                >
+                  <div className="bg-white rounded-full w-32 h-32 flex items-center justify-center shadow-lg">
+                    <div className="text-primary">
+                      {getCategoryIcon(
+                        servicesData.categories[activeCategory].title,
+                        64
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Service content */}
               <div>
-                <h3 className="text-2xl font-bold text-primary mb-6">
+                <h3 className="text-xl md:text-2xl font-bold text-primary mb-4 md:mb-6">
                   {servicesData.categories[activeCategory].title}
                 </h3>
-                <ul className="space-y-3">
+                <ul className="space-y-2 md:space-y-3">
                   {servicesData.categories[activeCategory].services.map(
                     (service, index) => (
                       <motion.li
@@ -142,13 +169,15 @@ const ServicesSection: React.FC = () => {
                         }}
                       >
                         <span className="text-primary mr-2">✓</span>
-                        <span>{service}</span>
+                        <span className="text-sm md:text-base">{service}</span>
                       </motion.li>
                     )
                   )}
                 </ul>
               </div>
-              <div className="flex justify-center">
+
+              {/* Desktop: Icon on the right */}
+              <div className="hidden md:flex justify-center">
                 <motion.div
                   animate={{
                     scale: [1, 1.05, 1],
