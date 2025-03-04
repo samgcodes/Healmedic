@@ -47,9 +47,24 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   onClick,
   index,
 }) => {
+  // Format the title to split "Services" onto a new line
+  const formatTitle = (title: string) => {
+    if (title.includes("Services")) {
+      const parts = title.split(" Services");
+      return (
+        <>
+          {parts[0]}
+          <br />
+          Services
+        </>
+      );
+    }
+    return title;
+  };
+
   return (
     <motion.div
-      className={`service-card rounded-xl p-3 md:p-4 cursor-pointer transition-all duration-300 border-2 ${
+      className={`service-card rounded-xl p-2 py-3 md:p-4 cursor-pointer transition-all duration-300 border-2 ${
         isActive
           ? "bg-primary text-white shadow-lg border-primary"
           : "bg-white text-gray-800 hover:shadow-md border-gray-200 hover:border-primary"
@@ -63,19 +78,21 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       }}
       whileHover={{ y: -5 }}
     >
-      <div className="flex flex-col items-center text-center">
-        <div className="mb-2 md:mb-3">
+      <div className="flex flex-col items-center text-center h-full">
+        <div className="mb-1 md:mb-3">
           {/* Create a clone of the icon with the appropriate color */}
           <div className={isActive ? "text-white" : "text-primary"}>
             {React.cloneElement(
-              getCategoryIcon(category.title, 32) as React.ReactElement,
+              getCategoryIcon(category.title, 24) as React.ReactElement,
               {
                 color: isActive ? "#ffffff" : "#9a77f6",
               }
             )}
           </div>
         </div>
-        <h3 className="text-sm md:text-lg font-bold">{category.title}</h3>
+        <h3 className="text-[16px] md:text-lg font-bold leading-tight">
+          {formatTitle(category.title)}
+        </h3>
       </div>
     </motion.div>
   );
@@ -100,9 +117,9 @@ const ServicesSection: React.FC = () => {
           </p>
         </FadeIn>
 
-        {/* Service Categories - Horizontal scrollable on mobile */}
-        <div className="mb-12 overflow-x-auto pb-4 -mx-4 px-4 md:overflow-visible md:pb-0 md:mx-0 md:px-0">
-          <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-6 min-w-max md:min-w-0">
+        {/* Service Categories - Side by side on all screens */}
+        <div className="mb-12">
+          <div className="grid grid-cols-3 gap-2 md:gap-4">
             {servicesData.categories.map((category, index) => (
               <ServiceCard
                 key={category.title}
