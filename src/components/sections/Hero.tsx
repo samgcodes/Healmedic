@@ -161,7 +161,7 @@ const Hero: React.FC<HeroProps> = ({
     "simplified",
   ],
   ctaText = "Transfer Now",
-  ctaLink = "/transfer",
+  ctaLink = "/contact",
   heroImage = "/assets/heroimg.png",
   phraseInterval = 3500,
 }) => {
@@ -276,7 +276,7 @@ const Hero: React.FC<HeroProps> = ({
                   whileTap={{ scale: 0.95 }}
                 >
                   <Link
-                    to="/learn-more"
+                    to="/services"
                     className="font-body border-2 border-white text-white hover:bg-white hover:text-[#9a77f6] px-6 py-3 rounded-full font-bold text-fluid-base inline-block transition-all duration-300 transform hover:-translate-y-1"
                     aria-label="Learn More"
                   >
