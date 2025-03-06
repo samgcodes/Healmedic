@@ -249,11 +249,11 @@ const Hero: React.FC<HeroProps> = ({
                 </div>
               </h1>
               <p className="font-body text-fluid-lg md:text-fluid-xl mt-6 mb-8 opacity-90 max-w-xl leading-relaxed relative z-10">
-                <span className="bg-[#8a67e6] px-2 py-1 rounded-lg">
-                  Experience pharmacy care
+                <span className=" px-2 py-1 rounded-lg">
+                  More than a pharmacy—your partner in health and recovery.
                 </span>{" "}
-                that puts you first. Transfer your prescriptions today and join
-                thousands of satisfied customers.
+                Personalized care, seamless transfers, and expert guidance.
+                Start your healing journey today!
               </p>
               <div className="flex space-x-4 items-center justify-center md:justify-start">
                 <motion.div

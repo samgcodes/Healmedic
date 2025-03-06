@@ -9,6 +9,7 @@ import {
 } from "./data";
 import ServiceCategoryCard from "./components/ServiceCategoryCard";
 import ServiceCategorySection from "./components/ServiceCategorySection";
+import DeliveryChecker from "./components/DeliveryChecker";
 import {
   FadeIn,
   AnimatedButton,
@@ -98,28 +99,76 @@ const Services = () => {
           ))}
 
           {/* Call to Action */}
-          <div className="text-center mt-16">
-            <h3 className="heading-4 text-primary mb-6">
-              Ready to Experience Our Services?
-            </h3>
-            <p className="body-regular text-gray-700 max-w-2xl mx-auto mb-8">
-              Whether you need prescription services, clinical consultations, or
-              wellness solutions, our team is here to support your health
-              journey. Contact us today to learn more or schedule an
-              appointment.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link to="/contact">
-                <AnimatedButton type="scale" className="btn-primary">
-                  Contact Us
-                </AnimatedButton>
-              </Link>
-              <Link to="/about-us">
-                <AnimatedButton type="scale" className="btn-secondary">
-                  Learn About Our Team
-                </AnimatedButton>
-              </Link>
+          <div className="mt-16">
+            <div className="bg-gradient-to-r from-[#8a67e6] to-[#9a77f6] rounded-3xl p-8 md:p-12 relative overflow-hidden">
+              {/* Decorative elements */}
+              <motion.div
+                className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full"
+                style={{ top: "-2rem", right: "-2rem" }}
+                animate={{
+                  scale: [1, 1.2, 1],
+                }}
+                transition={{
+                  duration: 8,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                }}
+              />
+              <motion.div
+                className="absolute bottom-0 left-0 w-40 h-40 bg-white opacity-5 rounded-full"
+                style={{ bottom: "-1rem", left: "-1rem" }}
+                animate={{
+                  scale: [1, 1.3, 1],
+                }}
+                transition={{
+                  duration: 6,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  delay: 1,
+                }}
+              />
+
+              <div className="relative z-10 text-center">
+                <motion.h2
+                  initial={{ scale: 0.95 }}
+                  animate={{ scale: 1 }}
+                  transition={{
+                    duration: 0.5,
+                    yoyo: Infinity,
+                    repeatDelay: 5,
+                  }}
+                  className="heading-2 text-white mb-6 font-bold tracking-wide"
+                >
+                  Ready to Experience Our Services?
+                </motion.h2>
+                <p className="body-regular text-white text-opacity-90 max-w-2xl mx-auto mb-8">
+                  Whether you need prescription services, clinical
+                  consultations, or wellness solutions, our team is here to
+                  support your health journey. Contact us today to learn more or
+                  schedule an appointment.
+                </p>
+                <div className="flex flex-col sm:flex-row justify-center gap-4">
+                  <Link to="/contact">
+                    <AnimatedButton type="scale" className="btn-secondary">
+                      Contact Us
+                    </AnimatedButton>
+                  </Link>
+                  <Link to="/about-us">
+                    <AnimatedButton
+                      type="scale"
+                      className="btn-outline text-white"
+                    >
+                      Learn About Our Team
+                    </AnimatedButton>
+                  </Link>
+                </div>
+              </div>
             </div>
+          </div>
+
+          {/* Delivery Checker */}
+          <div className="mt-16">
+            <DeliveryChecker />
           </div>
         </div>
       </section>

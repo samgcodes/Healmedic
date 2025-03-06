@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import DeliveryChecker from "./Services/components/DeliveryChecker";
 
 const Contact = () => {
   const [formStatus, setFormStatus] = useState({
@@ -505,6 +506,16 @@ const Contact = () => {
                   </p>
                 </div>
               </div>
+            </motion.div>
+
+            {/* Delivery Checker Section */}
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 1.4, duration: 0.5 }}
+              className="max-w-4xl mx-auto mt-16"
+            >
+              <DeliveryChecker />
             </motion.div>
           </div>
         </div>
