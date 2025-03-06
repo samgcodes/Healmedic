@@ -43,16 +43,14 @@ const WelcomeSection: React.FC = () => {
                 repeatType: "reverse",
               }}
             >
-              <div className="bg-[#f8f4ff] rounded-full w-80 h-80 flex items-center justify-center relative overflow-hidden">
+              <div className="bg-[#f8f4ff] rounded-full w-96 h-96 flex items-center justify-center relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#f0e8ff] to-[#e0d4ff] opacity-50"></div>
-                <div className="relative z-10 text-center px-6">
-                  <div className="text-6xl mb-4">💊</div>
-                  <h3 className="text-xl font-bold text-primary mb-2">
-                    Expert Care
-                  </h3>
-                  <p className="text-gray-700 text-sm">
-                    Personalized pharmacy services for your unique health needs
-                  </p>
+                <div className="relative z-10 flex items-center justify-center">
+                  <img
+                    src="/assets/pharmacist1.jpeg"
+                    alt="Professional pharmacist"
+                    className="w-80 h-80 object-cover rounded-full shadow-lg"
+                  />
                 </div>
               </div>
 
