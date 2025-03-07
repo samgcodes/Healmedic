@@ -43,7 +43,7 @@ const HomePage: React.FC = () => {
         transition={{ duration: 0.5 }}
         className="bg-white rounded-xl p-8 shadow-lg border-l-4 border-primary"
       >
-        <div className="flex flex-col md:flex-row items-start gap-6">
+        <div className="flex flex-col xl:flex-row items-start gap-6">
           <div className="flex-1">
             <h2 className="font-title text-2xl md:text-3xl font-semibold mb-4 text-gray-800">
               Welcome to the Patient Hub
@@ -56,7 +56,7 @@ const HomePage: React.FC = () => {
               nutrition, and more.
             </p>
           </div>
-          <div className="w-full md:w-1/4 aspect-square bg-gray-200 rounded-xl overflow-hidden flex items-center justify-center mb-4">
+          <div className="w-full md:w-1/3 xl:w-1/4 aspect-square bg-gray-200 rounded-xl overflow-hidden flex items-center justify-center mb-6 xl:mb-0 border-2 border-gray-300">
             <svg
               className="w-16 h-16 text-gray-400"
               fill="currentColor"
@@ -119,7 +119,7 @@ const HomePage: React.FC = () => {
         className="bg-gradient-to-r from-primary/10 to-purple-100 rounded-xl p-6 shadow-md"
       >
         <div className="flex flex-col md:flex-row items-center gap-6">
-          <div className="w-full md:w-1/4 aspect-square bg-gray-200 rounded-xl overflow-hidden flex items-center justify-center">
+          <div className="w-full md:w-1/3 xl:w-1/4 aspect-square bg-gray-200 rounded-xl overflow-hidden flex items-center justify-center mb-6 xl:mb-0 border-2 border-gray-300">
             <svg
               className="w-16 h-16 text-gray-400"
               fill="currentColor"

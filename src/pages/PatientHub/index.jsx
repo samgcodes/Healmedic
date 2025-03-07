@@ -61,7 +61,7 @@ const PatientHub = () => {
       <section className="bg-[#FDF8EC] py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row gap-8">
+            <div className="flex flex-col xl:flex-row gap-8">
               {/* Side Menu */}
               <SideMenu
                 activeSection={activeSection}
