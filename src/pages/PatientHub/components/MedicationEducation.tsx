@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import TabNavigation from "../../../components/utils/TabNavigation";
 
 const MedicationEducation: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -8,7 +9,7 @@ const MedicationEducation: React.FC = () => {
     {
       title: "Medication Adherence",
       content: (
-        <div className="space-y-4">
+        <div className="space-y-4 max-w-full overflow-hidden">
           <p className="font-body text-gray-600">
             Taking your medications as prescribed is crucial for managing health
             conditions effectively. Medication adherence means taking the right
@@ -60,7 +61,7 @@ const MedicationEducation: React.FC = () => {
     {
       title: "Understanding Side Effects",
       content: (
-        <div className="space-y-4">
+        <div className="space-y-4 max-w-full overflow-hidden">
           <p className="font-body text-gray-600">
             All medications can cause side effects, although not everyone
             experiences them. Understanding potential side effects and knowing
@@ -119,7 +120,7 @@ const MedicationEducation: React.FC = () => {
     {
       title: "Drug Interactions",
       content: (
-        <div className="space-y-4">
+        <div className="space-y-4 max-w-full overflow-hidden">
           <p className="font-body text-gray-600">
             Drug interactions occur when a medication affects how another
             medication works, potentially reducing effectiveness or increasing
@@ -192,7 +193,7 @@ const MedicationEducation: React.FC = () => {
     {
       title: "Proper Storage & Disposal",
       content: (
-        <div className="space-y-4">
+        <div className="space-y-4 max-w-full overflow-hidden">
           <p className="font-body text-gray-600">
             Proper medication storage and disposal are important for maintaining
             medication effectiveness and preventing accidental ingestion or
@@ -263,7 +264,7 @@ const MedicationEducation: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-full">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -282,20 +283,12 @@ const MedicationEducation: React.FC = () => {
               interactions, and proper storage and disposal.
             </p>
           </div>
-          <div className="w-full md:w-1/3 xl:w-1/4 aspect-square bg-gray-200 rounded-xl overflow-hidden flex items-center justify-center mb-6 xl:mb-0 border-2 border-gray-300">
-            <svg
-              className="w-16 h-16 text-gray-400"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z"
-                clipRule="evenodd"
-              ></path>
-            </svg>
-            {/* Image placeholder for medication education section */}
+          <div className="w-full md:w-1/3 xl:w-1/4 aspect-square rounded-xl overflow-hidden mb-6 xl:mb-0">
+            <img
+              src="/assets/PatientHub/medication_education_PH.png"
+              alt="Medication Education"
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
       </motion.div>
@@ -303,26 +296,15 @@ const MedicationEducation: React.FC = () => {
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
         {/* Tabs */}
         <div className="border-b border-gray-200">
-          <div className="flex overflow-x-auto scrollbar-hide">
-            {medicationTopics.map((topic, index) => (
-              <button
-                key={topic.title}
-                onClick={() => setActiveTab(index)}
-                className={`py-4 px-6 font-body text-sm md:text-base whitespace-nowrap flex items-center space-x-2 transition-colors duration-200 ${
-                  activeTab === index
-                    ? "text-primary border-b-2 border-primary font-medium"
-                    : "text-gray-600 hover:text-gray-900"
-                }`}
-              >
-                <span>{topic.icon}</span>
-                <span>{topic.title}</span>
-              </button>
-            ))}
-          </div>
+          <TabNavigation
+            items={medicationTopics}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-6 max-w-full">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}

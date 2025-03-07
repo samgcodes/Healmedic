@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import TabNavigation from "../../../components/utils/TabNavigation";
 
 const NutritionEducation: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -283,20 +284,12 @@ const NutritionEducation: React.FC = () => {
               understanding how nutrition impacts your overall health.
             </p>
           </div>
-          <div className="w-full md:w-1/3 xl:w-1/4 aspect-square bg-gray-200 rounded-xl overflow-hidden flex items-center justify-center mb-6 xl:mb-0 border-2 border-gray-300">
-            <svg
-              className="w-16 h-16 text-gray-400"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                d="M6 3a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm.293 5.293a1 1 0 011.414 0L10 10.586l2.293-2.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414zM6 17a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1z"
-                clipRule="evenodd"
-              ></path>
-            </svg>
-            {/* Image placeholder for nutrition education section */}
+          <div className="w-full md:w-1/3 xl:w-1/4 aspect-square rounded-xl overflow-hidden mb-6 xl:mb-0">
+            <img
+              src="/assets/PatientHub/nutrition_education_PH.png"
+              alt="Nutrition Education"
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
       </motion.div>
@@ -304,22 +297,11 @@ const NutritionEducation: React.FC = () => {
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
         {/* Tabs */}
         <div className="border-b border-gray-200">
-          <div className="flex overflow-x-auto scrollbar-hide">
-            {nutritionTopics.map((topic, index) => (
-              <button
-                key={topic.title}
-                onClick={() => setActiveTab(index)}
-                className={`py-4 px-6 font-body text-sm md:text-base whitespace-nowrap flex items-center space-x-2 transition-colors duration-200 ${
-                  activeTab === index
-                    ? "text-primary border-b-2 border-primary font-medium"
-                    : "text-gray-600 hover:text-gray-900"
-                }`}
-              >
-                <span>{topic.icon}</span>
-                <span>{topic.title}</span>
-              </button>
-            ))}
-          </div>
+          <TabNavigation
+            items={nutritionTopics}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
         </div>
 
         {/* Content */}

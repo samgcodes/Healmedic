@@ -56,23 +56,15 @@ const HomePage: React.FC = () => {
               nutrition, and more.
             </p>
           </div>
-          <div className="w-full md:w-1/3 xl:w-1/4 aspect-square bg-gray-200 rounded-xl overflow-hidden flex items-center justify-center mb-6 xl:mb-0 border-2 border-gray-300">
-            <svg
-              className="w-16 h-16 text-gray-400"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                clipRule="evenodd"
-              ></path>
-            </svg>
-            {/* Image placeholder for home section */}
+          <div className="w-full md:w-1/3 xl:w-1/4 aspect-square rounded-xl overflow-hidden mb-6 xl:mb-0">
+            <img
+              src="/assets/PatientHub/home_PH.png"
+              alt="Patient Hub Home"
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
-        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-md">
+        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-md mt-6">
           <p className="font-body text-blue-700">
             <span className="font-semibold">How to use this hub:</span> Select
             any topic from the menu on the left to view detailed information and
@@ -119,19 +111,12 @@ const HomePage: React.FC = () => {
         className="bg-gradient-to-r from-primary/10 to-purple-100 rounded-xl p-6 shadow-md"
       >
         <div className="flex flex-col md:flex-row items-center gap-6">
-          <div className="w-full md:w-1/3 xl:w-1/4 aspect-square bg-gray-200 rounded-xl overflow-hidden flex items-center justify-center mb-6 xl:mb-0 border-2 border-gray-300">
-            <svg
-              className="w-16 h-16 text-gray-400"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                clipRule="evenodd"
-              ></path>
-            </svg>
+          <div className="w-full md:w-1/3 xl:w-1/4 aspect-square rounded-xl overflow-hidden mb-6 xl:mb-0">
+            <img
+              src="/assets/PatientHub/home_PH.png"
+              alt="Health Education"
+              className="w-full h-full object-cover"
+            />
           </div>
           <div className="flex-1">
             <h3 className="font-title text-xl font-semibold mb-3 text-gray-800">

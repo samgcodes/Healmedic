@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import TabNavigation from "../../../components/utils/TabNavigation";
 
 const DiseaseManagement: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -218,20 +219,12 @@ const DiseaseManagement: React.FC = () => {
               journey with confidence.
             </p>
           </div>
-          <div className="w-full md:w-1/3 xl:w-1/4 aspect-square bg-gray-200 rounded-xl overflow-hidden flex items-center justify-center mb-6 xl:mb-0 border-2 border-gray-300">
-            <svg
-              className="w-16 h-16 text-gray-400"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                d="M7 2a1 1 0 00-.707 1.707L7 4.414v3.758a1 1 0 01-.293.707l-4 4C.817 14.769 2.156 18 4.828 18h10.343c2.673 0 4.012-3.231 2.122-5.121l-4-4A1 1 0 0113 8.172V4.414l.707-.707A1 1 0 0013 2H7zm2 6.172V4h2v4.172a3 3 0 00.879 2.12l1.027 1.028a4 4 0 00-2.171.102l-.47.156a4 4 0 01-2.53 0l-.563-.187a1.993 1.993 0 00-.114-.035l1.063-1.063A3 3 0 009 8.172z"
-                clipRule="evenodd"
-              ></path>
-            </svg>
-            {/* Image placeholder for disease management section */}
+          <div className="w-full md:w-1/3 xl:w-1/4 aspect-square rounded-xl overflow-hidden mb-6 xl:mb-0">
+            <img
+              src="/assets/PatientHub/disease_management_PH.png"
+              alt="Disease Management"
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
       </motion.div>
@@ -239,22 +232,11 @@ const DiseaseManagement: React.FC = () => {
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
         {/* Tabs */}
         <div className="border-b border-gray-200">
-          <div className="flex overflow-x-auto scrollbar-hide">
-            {diseaseCategories.map((category, index) => (
-              <button
-                key={category.title}
-                onClick={() => setActiveTab(index)}
-                className={`py-4 px-6 font-body text-sm md:text-base whitespace-nowrap flex items-center space-x-2 transition-colors duration-200 ${
-                  activeTab === index
-                    ? "text-primary border-b-2 border-primary font-medium"
-                    : "text-gray-600 hover:text-gray-900"
-                }`}
-              >
-                <span>{category.icon}</span>
-                <span>{category.title}</span>
-              </button>
-            ))}
-          </div>
+          <TabNavigation
+            items={diseaseCategories}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
         </div>
 
         {/* Content */}
