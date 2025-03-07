@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import HeroSection from "./components/HeroSection";
 import SideMenu from "./components/SideMenu";
@@ -11,6 +11,33 @@ import PatientTools from "./components/PatientTools";
 
 const PatientHub = () => {
   const [activeSection, setActiveSection] = useState("home");
+  const contentSectionRef = useRef(null);
+
+  // Function to scroll to the content section
+  const scrollToContentSection = useCallback(() => {
+    if (contentSectionRef.current) {
+      // Get the position of the content section
+      const yPosition = contentSectionRef.current.offsetTop;
+
+      // Apply a fixed offset to account for the navbar height
+      const offset = 80;
+
+      // Scroll to that position
+      window.scrollTo({
+        top: yPosition - offset,
+        behavior: "smooth",
+      });
+    }
+  }, []);
+
+  // Handle section change
+  const handleSectionChange = (section) => {
+    setActiveSection(section);
+    // Small timeout to ensure the DOM has updated
+    setTimeout(() => {
+      scrollToContentSection();
+    }, 10);
+  };
 
   // Function to render the appropriate content based on the active section
   const renderContent = () => {
@@ -58,14 +85,14 @@ const PatientHub = () => {
       <HeroSection />
 
       {/* Content Section */}
-      <section className="bg-[#FDF8EC] py-12">
+      <section ref={contentSectionRef} className="bg-[#FDF8EC] py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col xl:flex-row gap-8">
               {/* Side Menu */}
               <SideMenu
                 activeSection={activeSection}
-                setActiveSection={setActiveSection}
+                setActiveSection={handleSectionChange}
               />
 
               {/* Content Area */}
