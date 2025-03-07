@@ -131,7 +131,3 @@ src/
 2. Write meaningful commit messages
 3. Document new components and functions
 4. Test changes across different devices and browsers
-
-## Test Section
-
-This is a test sentence to verify GitHub integration is working properly.

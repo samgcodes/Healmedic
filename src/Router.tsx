@@ -5,7 +5,7 @@ import AboutUs from "./pages/AboutUs";
 import Contact from "./pages/Contact";
 import Services from "./pages/Services";
 import ForProviders from "./pages/ForProviders";
-import PatientHub from "./pages/PatientHub";
+import PatientHub from "./pages/PatientHub/index";
 
 const Router: React.FC = () => {
   return (
