@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface TabItem {
   title: string;
@@ -83,11 +83,8 @@ const TabNavigation: React.FC<TabNavigationProps> = ({
     }
   };
 
-  // Calculate scroll indicator width and position
-  const indicatorWidth =
-    containerWidth > 0 ? (containerWidth / scrollWidth) * 100 : 0;
-  const indicatorPosition =
-    scrollWidth > 0 ? (scrollPosition / scrollWidth) * 100 : 0;
+  // We still need these state variables for arrow visibility logic
+  // but we don't need to calculate indicator dimensions anymore
 
   return (
     <div className="relative">
