@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
+// No need to import motion since we removed the scrollbar
 
 interface TabItem {
   title: string;
@@ -22,9 +22,10 @@ const TabNavigation: React.FC<TabNavigationProps> = ({
 }) => {
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const [scrollWidth, setScrollWidth] = useState(0);
-  const [containerWidth, setContainerWidth] = useState(0);
+  // We only need to track if we should show arrows, not the actual values
+  const [, setScrollPosition] = useState(0);
+  const [, setScrollWidth] = useState(0);
+  const [, setContainerWidth] = useState(0);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -83,8 +84,8 @@ const TabNavigation: React.FC<TabNavigationProps> = ({
     }
   };
 
-  // We still need these state variables for arrow visibility logic
-  // but we don't need to calculate indicator dimensions anymore
+  // These state setters are used in the checkArrows function
+  // but we don't need the actual state values anymore
 
   return (
     <div className="relative">
