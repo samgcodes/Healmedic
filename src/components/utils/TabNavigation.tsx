@@ -93,12 +93,12 @@ const TabNavigation: React.FC<TabNavigationProps> = ({
       {showLeftArrow && (
         <button
           onClick={scrollLeft}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full p-1 shadow-md text-primary transition-all duration-200"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-primary/90 hover:bg-primary rounded-full p-1.5 shadow-lg text-white transition-all duration-200 ml-0.5"
           aria-label="Scroll left"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
+            className="h-6 w-6 md:h-5 md:w-5"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -138,12 +138,12 @@ const TabNavigation: React.FC<TabNavigationProps> = ({
       {showRightArrow && (
         <button
           onClick={scrollRight}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full p-1 shadow-md text-primary transition-all duration-200"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-primary/90 hover:bg-primary rounded-full p-1.5 shadow-lg text-white transition-all duration-200 mr-0.5"
           aria-label="Scroll right"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
+            className="h-6 w-6 md:h-5 md:w-5"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
