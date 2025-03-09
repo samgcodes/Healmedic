@@ -24,7 +24,7 @@ const ProcessSection: React.FC<ProcessSectionProps> = ({ steps }) => {
           How the CPA Process Works
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {steps.map((step, index) => (
+          {steps.map((step) => (
             <div key={step.step} className="relative">
               <div className="flex flex-col items-center">
                 <div className="w-16 h-16 rounded-full bg-white text-primary flex items-center justify-center text-2xl font-bold mb-4">

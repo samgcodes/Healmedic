@@ -2,7 +2,8 @@ import React from "react";
 import { motion } from "framer-motion";
 
 const AdvancedPracticePharmacist: React.FC = () => {
-  const capabilities = [
+  // Commented out unused array to fix TS6133 error
+  /* const capabilities = [
     {
       title: "Medication Management",
       description:
@@ -39,7 +40,7 @@ const AdvancedPracticePharmacist: React.FC = () => {
         "Provide expert clinical consultation to healthcare providers on complex pharmacotherapy issues.",
       icon: "👨‍⚕️",
     },
-  ];
+  ]; */
 
   return (
     <div className="space-y-8">

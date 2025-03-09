@@ -3,14 +3,14 @@ import { motion } from "framer-motion";
 
 interface PercentageBarProps {
   percentage: number;
-  label: string;
+  // Removed unused label prop to fix TS6133 error
   mainColor: string;
   delay: number;
 }
 
 const PercentageBar: React.FC<PercentageBarProps> = ({
   percentage,
-  label,
+  // Removed unused label parameter
   mainColor,
   delay,
 }) => {

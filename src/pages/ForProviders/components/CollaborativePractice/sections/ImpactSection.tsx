@@ -67,7 +67,6 @@ const ImpactSection: React.FC<ImpactSectionProps> = ({ impactData }) => {
             >
               <PercentageBar
                 percentage={stat.percentage}
-                label={`${stat.percentage}%`}
                 mainColor="#8a67e6"
                 delay={0.3 + index * 0.1}
               />
