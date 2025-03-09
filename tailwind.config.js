@@ -38,6 +38,20 @@ module.exports = {
         "fluid-8": "clamp(2rem, 1.6rem + 2vw, 3rem)",
         "fluid-16": "clamp(4rem, 3.2rem + 4vw, 6rem)",
       },
+      animation: {
+        "fade-in-down": "fadeInDown 1s ease-out forwards",
+        "fade-in-up": "fadeInUp 1s ease-out 0.3s forwards",
+      },
+      keyframes: {
+        fadeInDown: {
+          "0%": { opacity: "0", transform: "translateY(-20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        fadeInUp: {
+          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+      },
     },
   },
   plugins: [],

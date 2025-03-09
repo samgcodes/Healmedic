@@ -6,6 +6,7 @@ import Contact from "./pages/Contact";
 import Services from "./pages/Services";
 import ForProviders from "./pages/ForProviders";
 import PatientHub from "./pages/PatientHub/index";
+import Blog from "./pages/Blog";
 
 const Router: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const Router: React.FC = () => {
       <Route path="/services" element={<Services />} />
       <Route path="/for-providers" element={<ForProviders />} />
       <Route path="/patient-hub" element={<PatientHub />} />
+      <Route path="/blog" element={<Blog />} />
     </Routes>
   );
 };

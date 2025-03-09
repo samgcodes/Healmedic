@@ -1,8 +1,34 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
 
 const AboutUs = () => {
+  // Create refs for elements to animate
+  const pageRef = useRef(null);
+  const heroTitleRef = useRef(null);
+  const heroSubtitleRef = useRef(null);
+  const ourStoryRef = useRef(null);
+  const ourMissionRef = useRef(null);
+  const standoutSectionRef = useRef(null);
+  const featureRefs = useRef([]);
+  const coFoundersRef = useRef(null);
+  const commitmentRef = useRef(null);
+  const joinUsRef = useRef(null);
+
+  // Reset featureRefs when standoutFeatures changes
+  featureRefs.current = [];
+
+  // Add to feature refs
+  const addToFeatureRefs = (el) => {
+    if (el && !featureRefs.current.includes(el)) {
+      featureRefs.current.push(el);
+    }
+  };
+
   const standoutFeatures = [
     {
       title: "Independent & Patient-Centered",
@@ -48,48 +74,236 @@ const AboutUs = () => {
     },
   ];
 
+  // Hero section animations - Matching Blog page animation
+  useEffect(() => {
+    if (!heroTitleRef.current || !heroSubtitleRef.current) return;
+
+    // Create context for better memory management
+    const ctx = gsap.context(() => {
+      // Set initial state to prevent flash of unstyled content
+      gsap.set([heroTitleRef.current, heroSubtitleRef.current], {
+        opacity: 0,
+        y: 20,
+      });
+
+      // Create a timeline for sequenced animations with a slight delay
+      const heroTl = gsap.timeline({
+        defaults: {
+          ease: "power2.out",
+          duration: 1,
+        },
+        delay: 0.2, // Small delay to ensure component is fully mounted
+        onComplete: () => console.log("Hero animation complete"),
+      });
+
+      // Add animations to the timeline - matching Blog page animation
+      heroTl
+        .fromTo(
+          heroTitleRef.current,
+          {
+            y: 30,
+            opacity: 0,
+            scale: 0.95,
+          },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            onComplete: () => console.log("Title animation complete"),
+          }
+        )
+        .fromTo(
+          heroSubtitleRef.current,
+          {
+            y: 20,
+            opacity: 0,
+            scale: 0.98,
+          },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            onComplete: () => console.log("Subtitle animation complete"),
+          },
+          "-=0.5" // Start before the previous animation finishes
+        );
+    }, pageRef);
+
+    // Cleanup
+    return () => ctx.revert();
+  }, []);
+
+  // Scroll animations
+  useEffect(() => {
+    if (!ourStoryRef.current) return;
+
+    // Create context for better memory management
+    const ctx = gsap.context(() => {
+      // Our Story section
+      gsap.fromTo(
+        ourStoryRef.current,
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          scrollTrigger: {
+            trigger: ourStoryRef.current,
+            start: "top 80%",
+          },
+        }
+      );
+
+      // Our Mission section
+      gsap.fromTo(
+        ourMissionRef.current,
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          scrollTrigger: {
+            trigger: ourMissionRef.current,
+            start: "top 80%",
+          },
+        }
+      );
+
+      // Why We Stand Out section
+      gsap.fromTo(
+        standoutSectionRef.current,
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          scrollTrigger: {
+            trigger: standoutSectionRef.current,
+            start: "top 80%",
+          },
+        }
+      );
+
+      // Feature cards with staggered animation
+      gsap.fromTo(
+        featureRefs.current,
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          stagger: 0.1,
+          scrollTrigger: {
+            trigger: standoutSectionRef.current,
+            start: "top 70%",
+          },
+        }
+      );
+
+      // Co-Founders section
+      gsap.fromTo(
+        coFoundersRef.current,
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          scrollTrigger: {
+            trigger: coFoundersRef.current,
+            start: "top 80%",
+          },
+        }
+      );
+
+      // Commitment section
+      gsap.fromTo(
+        commitmentRef.current,
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          scrollTrigger: {
+            trigger: commitmentRef.current,
+            start: "top 80%",
+          },
+        }
+      );
+
+      // Join Us section
+      gsap.fromTo(
+        joinUsRef.current,
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          scrollTrigger: {
+            trigger: joinUsRef.current,
+            start: "top 80%",
+          },
+        }
+      );
+    });
+
+    // Cleanup
+    return () => ctx.revert();
+  }, []);
+
+  // Setup hover animations for feature cards
+  useEffect(() => {
+    const cards = featureRefs.current;
+
+    // Add hover animations to each card
+    cards.forEach((card) => {
+      card.addEventListener("mouseenter", () => {
+        gsap.to(card, {
+          boxShadow:
+            "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+          duration: 0.3,
+        });
+      });
+
+      card.addEventListener("mouseleave", () => {
+        gsap.to(card, {
+          boxShadow:
+            "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+          duration: 0.3,
+        });
+      });
+    });
+
+    // Cleanup event listeners
+    return () => {
+      cards.forEach((card) => {
+        card.removeEventListener("mouseenter", () => {});
+        card.removeEventListener("mouseleave", () => {});
+      });
+    };
+  }, []);
+
   return (
-    <div className="bg-gradient-to-br from-primary to-[#7c5ae0]">
+    <div ref={pageRef} className="bg-gradient-to-br from-primary to-[#7c5ae0]">
       {/* Hero Section - Redesigned with straight edge and more spacing */}
-      <motion.section
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="relative pt-32 pb-16 md:pt-40 md:pb-20 flex items-center justify-center text-white"
-      >
+      <section className="relative pt-32 pb-16 md:pt-40 md:pb-20 flex items-center justify-center text-white">
         <div className="container-narrow text-center z-10">
-          <motion.h1
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="heading-2 mb-4"
-          >
+          <h1 ref={heroTitleRef} className="heading-2 mb-4">
             About Us
-          </motion.h1>
-          <motion.p
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-            className="body-large"
-          >
+          </h1>
+          <p ref={heroSubtitleRef} className="body-large">
             Your Community Pharmacy, Redefined
-          </motion.p>
+          </p>
         </div>
 
         {/* Straight edge instead of wavy */}
         <div className="absolute bottom-0 left-0 right-0 h-4 bg-[#FDF8EC]"></div>
-      </motion.section>
+      </section>
 
       {/* Content Section - New content */}
       <section className="bg-[#FDF8EC] py-16">
         <div className="container mx-auto px-4">
           {/* Our Story */}
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-            className="max-w-4xl mx-auto mb-20"
-          >
+          <div ref={ourStoryRef} className="max-w-4xl mx-auto mb-20">
             <div className="bg-white rounded-xl p-8 shadow-lg border-l-4 border-primary">
               <h2 className="font-title text-3xl md:text-4xl font-semibold mb-8 text-gray-800 text-center">
                 Our Story – The Vision Behind HealMedic Pharmacy
@@ -198,15 +412,10 @@ const AboutUs = () => {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Our Mission */}
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.7, duration: 0.5 }}
-            className="max-w-4xl mx-auto mb-20"
-          >
+          <div ref={ourMissionRef} className="max-w-4xl mx-auto mb-20">
             <div className="bg-white rounded-xl p-8 shadow-lg border-l-4 border-primary">
               <h2 className="font-title text-3xl md:text-4xl font-semibold mb-8 text-gray-800 text-center">
                 Our Mission
@@ -221,26 +430,19 @@ const AboutUs = () => {
                 </p>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Why We Stand Out */}
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.8, duration: 0.5 }}
-            className="max-w-4xl mx-auto mb-20"
-          >
+          <div ref={standoutSectionRef} className="max-w-4xl mx-auto mb-20">
             <h2 className="font-title text-3xl md:text-4xl font-semibold mb-10 text-gray-800 text-center">
               Why We Stand Out
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {standoutFeatures.map((feature, index) => (
-                <motion.div
+                <div
                   key={feature.title}
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.9 + index * 0.1, duration: 0.5 }}
-                  className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-primary hover:shadow-xl transition-shadow duration-300"
+                  ref={addToFeatureRefs}
+                  className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-primary transition-shadow duration-300"
                 >
                   <div className="text-4xl mb-4">{feature.icon}</div>
                   <h3 className="font-title text-xl font-semibold mb-3 text-gray-800">
@@ -249,18 +451,13 @@ const AboutUs = () => {
                   <p className="font-body text-gray-600">
                     {feature.description}
                   </p>
-                </motion.div>
+                </div>
               ))}
             </div>
-          </motion.div>
+          </div>
 
           {/* Meet Our Co-Founders */}
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 1.3, duration: 0.5 }}
-            className="max-w-4xl mx-auto mb-20"
-          >
+          <div ref={coFoundersRef} className="max-w-4xl mx-auto mb-20">
             <h2 className="font-title text-3xl md:text-4xl font-semibold mb-10 text-gray-800 text-center">
               Meet Our Co-Founders
             </h2>
@@ -397,15 +594,10 @@ const AboutUs = () => {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Our Commitment to You */}
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 1.5, duration: 0.5 }}
-            className="max-w-4xl mx-auto mb-20"
-          >
+          <div ref={commitmentRef} className="max-w-4xl mx-auto mb-20">
             <h2 className="font-title text-3xl md:text-4xl font-semibold mb-8 text-gray-800 text-center">
               Our Commitment to You
             </h2>
@@ -423,15 +615,10 @@ const AboutUs = () => {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
 
           {/* Join Our Pharmacy Family */}
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 1.7, duration: 0.5 }}
-            className="max-w-4xl mx-auto text-center"
-          >
+          <div ref={joinUsRef} className="max-w-4xl mx-auto text-center">
             <h2 className="font-title text-3xl md:text-4xl font-semibold mb-6 text-gray-800">
               Join Our Pharmacy Family
             </h2>
@@ -449,7 +636,7 @@ const AboutUs = () => {
                 Meet Our Team
               </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
     </div>

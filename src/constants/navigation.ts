@@ -7,6 +7,7 @@ export const MENU_ITEMS: NavigationItem[] = [
   { name: "Services", path: "/services" },
   { name: "Patient Hub", path: "/patient-hub" },
   { name: "Provider Hub", path: "/for-providers" },
+  { name: "Blog", path: "/blog" },
 ];
 
 /**
