@@ -6,7 +6,7 @@ import { NavigationItem } from "../types";
 export const MENU_ITEMS: NavigationItem[] = [
   { name: "Services", path: "/services" },
   { name: "Patient Hub", path: "/patient-hub" },
-  { name: "For Providers", path: "/for-providers" },
+  { name: "Provider Hub", path: "/for-providers" },
 ];
 
 /**
