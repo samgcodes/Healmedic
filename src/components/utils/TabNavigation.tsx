@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-// No need to import motion since we removed the scrollbar
+import { gsap } from "gsap";
+import useMediaQuery, { breakpoints } from "../../hooks/useMediaQuery";
 
 interface TabItem {
   title: string;
@@ -22,12 +23,20 @@ const TabNavigation: React.FC<TabNavigationProps> = ({
 }) => {
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
+  const [previousActiveTab, setPreviousActiveTab] = useState(activeTab);
   // We only need to track if we should show arrows, not the actual values
   const [, setScrollPosition] = useState(0);
   const [, setScrollWidth] = useState(0);
   const [, setContainerWidth] = useState(0);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const isMobile = useMediaQuery(breakpoints.mobile);
+
+  // Initialize tab refs array
+  useEffect(() => {
+    tabRefs.current = tabRefs.current.slice(0, items.length);
+  }, [items]);
 
   // Check if arrows should be shown
   useEffect(() => {
@@ -84,8 +93,89 @@ const TabNavigation: React.FC<TabNavigationProps> = ({
     }
   };
 
-  // These state setters are used in the checkArrows function
-  // but we don't need the actual state values anymore
+  // Animate the active tab indicator
+  useEffect(() => {
+    if (activeTab !== previousActiveTab) {
+      // Scroll the active tab into view
+      if (tabRefs.current[activeTab]) {
+        const tabElement = tabRefs.current[activeTab];
+        if (tabElement && scrollContainerRef.current) {
+          const scrollContainer = scrollContainerRef.current;
+          const tabRect = tabElement.getBoundingClientRect();
+          const containerRect = scrollContainer.getBoundingClientRect();
+
+          // Calculate if the tab is partially or fully outside the visible area
+          const isTabLeftOfView = tabRect.left < containerRect.left;
+          const isTabRightOfView = tabRect.right > containerRect.right;
+
+          if (isTabLeftOfView) {
+            // Scroll to make the tab visible on the left
+            const scrollLeft =
+              scrollContainer.scrollLeft -
+              (containerRect.left - tabRect.left) -
+              16;
+            scrollContainer.scrollTo({ left: scrollLeft, behavior: "smooth" });
+          } else if (isTabRightOfView) {
+            // Scroll to make the tab visible on the right
+            const scrollLeft =
+              scrollContainer.scrollLeft +
+              (tabRect.right - containerRect.right) +
+              16;
+            scrollContainer.scrollTo({ left: scrollLeft, behavior: "smooth" });
+          }
+        }
+      }
+
+      // Animate the tab transition
+      const duration = isMobile ? 0.2 : 0.3;
+
+      // Animate the previously active tab
+      if (tabRefs.current[previousActiveTab]) {
+        gsap.to(tabRefs.current[previousActiveTab], {
+          scale: 1,
+          duration: duration,
+          ease: "power2.out",
+        });
+      }
+
+      // Animate the newly active tab
+      if (tabRefs.current[activeTab]) {
+        gsap.fromTo(
+          tabRefs.current[activeTab],
+          { scale: 0.95 },
+          {
+            scale: 1,
+            duration: duration,
+            ease: "power2.out",
+          }
+        );
+
+        // Pulse animation for the icon
+        const iconElement =
+          tabRefs.current[activeTab]?.querySelector(".tab-icon");
+        if (iconElement) {
+          gsap.fromTo(
+            iconElement,
+            { scale: 1 },
+            {
+              scale: 1.2,
+              duration: duration * 0.8,
+              yoyo: true,
+              repeat: 1,
+              ease: "power2.inOut",
+            }
+          );
+        }
+      }
+
+      setPreviousActiveTab(activeTab);
+    }
+  }, [activeTab, previousActiveTab, isMobile]);
+
+  // Handle tab click with animation
+  const handleTabClick = (index: number) => {
+    setActiveTab(index);
+  };
 
   return (
     <div className="relative">
@@ -121,14 +211,15 @@ const TabNavigation: React.FC<TabNavigationProps> = ({
         {items.map((item, index) => (
           <button
             key={item.title}
-            onClick={() => setActiveTab(index)}
+            ref={(el) => (tabRefs.current[index] = el)}
+            onClick={() => handleTabClick(index)}
             className={`py-4 px-6 font-body text-sm md:text-base whitespace-nowrap flex items-center space-x-2 transition-all duration-200 ${
               activeTab === index
                 ? "text-primary border-b-2 border-primary font-medium bg-primary/5"
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
             }`}
           >
-            <span className="text-xl">{item.icon}</span>
+            <span className="text-xl tab-icon">{item.icon}</span>
             <span>{item.title}</span>
           </button>
         ))}
