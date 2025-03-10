@@ -1,7 +1,7 @@
 import React from "react";
-import Hero from "../../components/sections/Hero.tsx";
-import WhyUs from "../../components/sections/WhyUs.tsx";
-import FAQ from "../../components/sections/FAQ.tsx";
+import Hero from "../../components/sections/Hero";
+import WhyUs from "../../components/sections/WhyUs";
+import FAQ from "../../components/sections/FAQ";
 
 /**
  * Home page component

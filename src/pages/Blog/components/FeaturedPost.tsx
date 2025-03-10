@@ -1,110 +1,112 @@
-import React from "react";
-import { motion } from "framer-motion";
-import Lottie from "lottie-react";
+import React, { useRef, useEffect } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { BlogPost } from "../types";
 
-// Import a sample Lottie animation
-// This is a placeholder animation - in a real app, you'd use a specific animation file
-const pulseAnimation = {
-  v: "5.7.8",
-  fr: 30,
-  ip: 0,
-  op: 60,
-  w: 300,
-  h: 300,
-  nm: "Pulse Animation",
-  ddd: 0,
-  assets: [],
-  layers: [
-    {
-      ddd: 0,
-      ind: 1,
-      ty: 4,
-      nm: "Circle",
-      sr: 1,
-      ks: {
-        o: {
-          a: 1,
-          k: [
-            { t: 0, s: [100], e: [50] },
-            { t: 30, s: [50], e: [100] },
-            { t: 60, s: [100] },
-          ],
-        },
-        r: { a: 0, k: 0 },
-        p: { a: 0, k: [150, 150, 0] },
-        a: { a: 0, k: [0, 0, 0] },
-        s: {
-          a: 1,
-          k: [
-            { t: 0, s: [100, 100, 100], e: [120, 120, 100] },
-            { t: 30, s: [120, 120, 100], e: [100, 100, 100] },
-            { t: 60, s: [100, 100, 100] },
-          ],
-        },
-      },
-      ao: 0,
-      shapes: [
-        {
-          ty: "gr",
-          it: [
-            {
-              d: 1,
-              ty: "el",
-              s: { a: 0, k: [100, 100] },
-              p: { a: 0, k: [0, 0] },
-            },
-            {
-              ty: "fl",
-              c: { a: 0, k: [0.541, 0.404, 0.902, 1] },
-              o: { a: 0, k: 100 },
-              r: 1,
-            },
-            {
-              ty: "tr",
-              p: { a: 0, k: [0, 0] },
-              a: { a: 0, k: [0, 0] },
-              s: { a: 0, k: [100, 100] },
-              r: { a: 0, k: 0 },
-              o: { a: 0, k: 100 },
-            },
-          ],
-          nm: "Circle",
-        },
-      ],
-      ip: 0,
-      op: 60,
-      st: 0,
-    },
-  ],
-  markers: [],
-};
+// Register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
 
 interface FeaturedPostProps {
   post: BlogPost;
 }
 
 const FeaturedPost: React.FC<FeaturedPostProps> = ({ post }) => {
+  // Create refs for animated elements
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const pulseCircleRef = useRef<HTMLDivElement>(null);
+
+  // Set up animations
+  useEffect(() => {
+    // Title animation
+    if (titleRef.current) {
+      gsap.set(titleRef.current, { opacity: 0, y: 20 });
+
+      gsap.to(titleRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: titleRef.current,
+          start: "top bottom-=100",
+          toggleActions: "play none none none",
+          once: true,
+        },
+      });
+    }
+
+    // Image container animation
+    if (imageContainerRef.current) {
+      gsap.set(imageContainerRef.current, { opacity: 0, x: -30 });
+
+      gsap.to(imageContainerRef.current, {
+        opacity: 1,
+        x: 0,
+        duration: 0.8,
+        delay: 0.2,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: imageContainerRef.current,
+          start: "top bottom-=100",
+          toggleActions: "play none none none",
+          once: true,
+        },
+      });
+    }
+
+    // Content animation
+    if (contentRef.current) {
+      gsap.set(contentRef.current, { opacity: 0, x: 30 });
+
+      gsap.to(contentRef.current, {
+        opacity: 1,
+        x: 0,
+        duration: 0.8,
+        delay: 0.4,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: contentRef.current,
+          start: "top bottom-=100",
+          toggleActions: "play none none none",
+          once: true,
+        },
+      });
+    }
+
+    // Pulse animation for circle
+    if (pulseCircleRef.current) {
+      gsap.to(pulseCircleRef.current, {
+        scale: 1.2,
+        opacity: 0.5,
+        duration: 1,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
+    }
+
+    // Cleanup
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    };
+  }, []);
+
   return (
     <section className="py-16 sm:py-24 bg-[#FDF8EC]">
       <div className="container mx-auto px-4">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
+        <h2
+          ref={titleRef}
           className="text-3xl sm:text-4xl font-title font-bold text-gray-800 mb-12 text-center"
         >
           Featured Article
-        </motion.h2>
+        </h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-          {/* Image with Lottie animation overlay */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
+          {/* Image with animation overlay */}
+          <div
+            ref={imageContainerRef}
             className="relative rounded-2xl overflow-hidden shadow-xl h-full"
           >
             <img
@@ -113,22 +115,18 @@ const FeaturedPost: React.FC<FeaturedPostProps> = ({ post }) => {
               className="object-cover w-full h-full"
             />
 
-            {/* Lottie animation overlay */}
-            <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32">
-              <Lottie
-                animationData={pulseAnimation}
-                loop={true}
-                autoplay={true}
+            {/* Framer Motion animation overlay */}
+            <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center">
+              <div
+                ref={pulseCircleRef}
+                className="w-16 h-16 sm:w-20 sm:h-20 bg-primary rounded-full"
               />
             </div>
-          </motion.div>
+          </div>
 
           {/* Content */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            viewport={{ once: true }}
+          <div
+            ref={contentRef}
             className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg"
           >
             <div className="flex items-center mb-4">
@@ -168,19 +166,43 @@ const FeaturedPost: React.FC<FeaturedPostProps> = ({ post }) => {
               <span className="text-sm text-gray-500">
                 {post.readTime} min read
               </span>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-primary hover:bg-primary-dark text-white font-medium py-2 px-5 rounded-full transition-all duration-300"
-              >
+              <button className="bg-primary hover:bg-primary-dark text-white font-medium py-2 px-5 rounded-full transition-all duration-300 read-button">
                 Read Article
-              </motion.button>
+              </button>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>
   );
 };
+
+// Add button hover animation when component is mounted
+const addButtonHoverEffects = () => {
+  const buttons = document.querySelectorAll(".read-button");
+
+  buttons.forEach((button) => {
+    button.addEventListener("mouseenter", () => {
+      gsap.to(button, { scale: 1.05, duration: 0.3 });
+    });
+
+    button.addEventListener("mouseleave", () => {
+      gsap.to(button, { scale: 1, duration: 0.3 });
+    });
+
+    button.addEventListener("mousedown", () => {
+      gsap.to(button, { scale: 0.95, duration: 0.1 });
+    });
+
+    button.addEventListener("mouseup", () => {
+      gsap.to(button, { scale: 1.05, duration: 0.1 });
+    });
+  });
+};
+
+// Run once after initial render
+if (typeof document !== "undefined") {
+  document.addEventListener("DOMContentLoaded", addButtonHoverEffects);
+}
 
 export default FeaturedPost;

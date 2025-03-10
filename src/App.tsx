@@ -1,8 +1,8 @@
 import React from "react";
 import Router from "./Router";
-import Navbar from "./components/layout/Navbar.tsx";
-import Footer from "./components/layout/Footer.tsx";
-import ScrollToTop from "./components/utils/ScrollToTop.tsx";
+import Navbar from "./components/layout/Navbar";
+import Footer from "./components/layout/Footer";
+import ScrollToTop from "./components/utils/ScrollToTop";
 
 const App: React.FC = () => {
   return (

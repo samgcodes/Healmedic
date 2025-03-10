@@ -1,8 +1,11 @@
 import React, { useRef, useEffect } from "react";
-import { motion } from "framer-motion";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { BlogPost } from "../types";
 import { getCategoryById } from "../data/blogData";
+
+// Register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
 
 interface BlogCardProps {
   post: BlogPost;
@@ -42,13 +45,43 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, index }) => {
     };
   }, []);
 
+  // Add ScrollTrigger animation
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!card) return;
+
+    // Set initial state
+    gsap.set(card, { opacity: 0, y: 30 });
+
+    // Create animation with ScrollTrigger
+    const animation = gsap.to(card, {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      delay: index * 0.1,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: card,
+        start: "top bottom-=100",
+        toggleActions: "play none none none",
+        once: true,
+      },
+    });
+
+    // Cleanup
+    return () => {
+      animation.kill();
+      ScrollTrigger.getAll().forEach((trigger) => {
+        if (trigger.vars.trigger === card) {
+          trigger.kill();
+        }
+      });
+    };
+  }, [index]);
+
   return (
-    <motion.div
+    <div
       ref={cardRef}
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
-      viewport={{ once: true }}
       className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer"
     >
       {/* Image */}
@@ -105,7 +138,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, index }) => {
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
