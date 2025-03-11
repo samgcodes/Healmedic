@@ -1,5 +1,6 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useRef, useEffect, createContext } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { collaborativePracticeData } from "../data";
 import {
   ImpactSection,
@@ -10,7 +11,19 @@ import {
   ImageSection,
 } from "./CollaborativePractice/index";
 
+// Register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
+
+// Create a context to pass animation state to child components
+export const AnimationContext = createContext({
+  isInitialLoad: true,
+});
+
 const CollaborativePractice: React.FC = () => {
+  const mainSectionRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const isInitialLoadRef = useRef(true);
+
   // Extract data for impact section
   const impactData = {
     title: "Impact of Collaborative Practice Agreements",
@@ -41,44 +54,77 @@ const CollaborativePractice: React.FC = () => {
     ],
   };
 
+  // Set up GSAP animations
+  useEffect(() => {
+    // Handle initial fade-in animation for the main content
+    if (contentRef.current) {
+      gsap.fromTo(
+        contentRef.current,
+        { opacity: 0 },
+        {
+          opacity: 1,
+          duration: 0.3,
+          ease: "power2.out",
+          onComplete: () => {
+            // After initial animation completes, set isInitialLoad to false
+            isInitialLoadRef.current = false;
+          },
+        }
+      );
+    }
+
+    // Cleanup function to remove any ScrollTrigger instances when component unmounts
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    };
+  }, []);
+
   return (
-    <div className="space-y-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="bg-white rounded-xl p-8 shadow-lg border-l-4 border-primary"
-      >
-        <h2 className="font-title text-2xl md:text-3xl font-semibold mb-4 text-gray-800">
-          {collaborativePracticeData.title}
-        </h2>
-        <p className="font-body text-lg text-gray-600 mb-6 max-w-3xl">
-          {collaborativePracticeData.description}
-        </p>
+    <AnimationContext.Provider
+      value={{ isInitialLoad: isInitialLoadRef.current }}
+    >
+      <div className="space-y-8" ref={contentRef}>
+        <div
+          ref={mainSectionRef}
+          className="bg-white rounded-xl p-8 shadow-lg border-l-4 border-primary"
+        >
+          <h2 className="font-title text-2xl md:text-3xl font-semibold mb-4 text-gray-800">
+            {collaborativePracticeData.title}
+          </h2>
+          <p className="font-body text-lg text-gray-600 mb-6 max-w-3xl">
+            {collaborativePracticeData.description}
+          </p>
 
-        {/* CPA Impact Infographic */}
-        <ImpactSection impactData={impactData} />
+          {/* CPA Impact Infographic */}
+          <ImpactSection impactData={impactData} />
 
-        {/* Charts Section */}
-        <ChartsSection
-          timeSavingsSource="American Medical Association Survey, 2023"
-          costSavingsSource="Journal of Managed Care Pharmacy, 2022"
-          satisfactionSource="American Medical Association Survey, 2023"
-        />
+          {/* Charts Section */}
+          <ChartsSection
+            timeSavingsSource="American Medical Association Survey, 2023"
+            costSavingsSource="Journal of Managed Care Pharmacy, 2022"
+            satisfactionSource="American Medical Association Survey, 2023"
+          />
 
-        {/* Benefits Grid */}
-        <BenefitsSection benefits={collaborativePracticeData.benefits} />
-      </motion.div>
+          {/* Benefits Grid */}
+          <BenefitsSection benefits={collaborativePracticeData.benefits} />
+        </div>
 
-      {/* CPA Process */}
-      <ProcessSection steps={collaborativePracticeData.cpaProcess} />
+        {/* CPA Process */}
+        <div className="scroll-section">
+          <ProcessSection steps={collaborativePracticeData.cpaProcess} />
+        </div>
 
-      {/* CPA Examples */}
-      <ExamplesSection examples={collaborativePracticeData.cpaExamples} />
+        {/* CPA Examples */}
+        <div className="scroll-section">
+          <ExamplesSection examples={collaborativePracticeData.cpaExamples} />
+        </div>
 
-      {/* Image placeholder for CPA */}
-      <ImageSection imageDescription="Pharmacist and physician collaborating on patient care" />
-    </div>
+        {/* Image placeholder for CPA */}
+        <div className="scroll-section">
+          <ImageSection imageDescription="Pharmacist and physician collaborating on patient care" />
+        </div>
+      </div>
+    </AnimationContext.Provider>
   );
 };
 

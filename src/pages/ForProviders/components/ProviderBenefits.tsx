@@ -1,14 +1,204 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useRef, useEffect } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { providerBenefitsData } from "../data";
 
+// Register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
+
 const ProviderBenefits: React.FC = () => {
+  const mainSectionRef = useRef<HTMLDivElement>(null);
+  const benefitCardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const providerTypesSectionRef = useRef<HTMLDivElement>(null);
+  const providerTypeCardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const whyUsSectionRef = useRef<HTMLDivElement>(null);
+
+  // Set up GSAP animations
+  useEffect(() => {
+    // Main section animation
+    if (mainSectionRef.current) {
+      gsap.fromTo(
+        mainSectionRef.current,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: mainSectionRef.current,
+            start: "top bottom-=100",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }
+
+    // Benefit cards staggered animation
+    if (benefitCardsRef.current.filter(Boolean).length > 0) {
+      gsap.fromTo(
+        benefitCardsRef.current.filter(Boolean),
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.3,
+          stagger: 0.05,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: mainSectionRef.current,
+            start: "top bottom-=50",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+
+      // Add hover animations to benefit cards
+      benefitCardsRef.current.filter(Boolean).forEach((card) => {
+        if (!card) return;
+
+        card.addEventListener("mouseenter", () => {
+          gsap.to(card, {
+            y: -5,
+            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        });
+
+        card.addEventListener("mouseleave", () => {
+          gsap.to(card, {
+            y: 0,
+            boxShadow:
+              "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        });
+      });
+    }
+
+    // Provider types section animation
+    if (providerTypesSectionRef.current) {
+      gsap.fromTo(
+        providerTypesSectionRef.current,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: providerTypesSectionRef.current,
+            start: "top bottom-=100",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }
+
+    // Provider type cards staggered animation
+    if (providerTypeCardsRef.current.filter(Boolean).length > 0) {
+      gsap.fromTo(
+        providerTypeCardsRef.current.filter(Boolean),
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.3,
+          stagger: 0.05,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: providerTypesSectionRef.current,
+            start: "top bottom-=50",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+
+      // Add hover animations to provider type cards
+      providerTypeCardsRef.current.filter(Boolean).forEach((card) => {
+        if (!card) return;
+
+        card.addEventListener("mouseenter", () => {
+          gsap.to(card, {
+            y: -5,
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        });
+
+        card.addEventListener("mouseleave", () => {
+          gsap.to(card, {
+            y: 0,
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        });
+      });
+    }
+
+    // Why us section animation
+    if (whyUsSectionRef.current) {
+      gsap.fromTo(
+        whyUsSectionRef.current,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: whyUsSectionRef.current,
+            start: "top bottom-=100",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+
+      // Animate the grid items
+      const gridItems = whyUsSectionRef.current.querySelectorAll(".grid > div");
+      gsap.fromTo(
+        gridItems,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.4,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: whyUsSectionRef.current,
+            start: "top bottom-=50",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }
+
+    // Cleanup
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+
+      // Remove event listeners
+      benefitCardsRef.current.filter(Boolean).forEach((card) => {
+        if (!card) return;
+        card.removeEventListener("mouseenter", () => {});
+        card.removeEventListener("mouseleave", () => {});
+      });
+
+      providerTypeCardsRef.current.filter(Boolean).forEach((card) => {
+        if (!card) return;
+        card.removeEventListener("mouseenter", () => {});
+        card.removeEventListener("mouseleave", () => {});
+      });
+    };
+  }, []);
+
   return (
     <div className="space-y-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
+      <div
+        ref={mainSectionRef}
         className="bg-white rounded-xl p-8 shadow-lg border-l-4 border-primary"
       >
         <h2 className="font-title text-2xl md:text-3xl font-semibold mb-4 text-gray-800">
@@ -21,15 +211,9 @@ const ProviderBenefits: React.FC = () => {
         {/* Benefits Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
           {providerBenefitsData.benefits.map((benefit: any, index: number) => (
-            <motion.div
+            <div
               key={benefit.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2, delay: 0.05 * index }}
-              whileHover={{
-                y: -5,
-                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
-              }}
+              ref={(el) => (benefitCardsRef.current[index] = el)}
               className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow duration-300 h-full"
             >
               <div className="text-4xl mb-4">{benefit.icon}</div>
@@ -37,16 +221,14 @@ const ProviderBenefits: React.FC = () => {
                 {benefit.title}
               </h3>
               <p className="font-body text-gray-600">{benefit.description}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
-      </motion.div>
+      </div>
 
       {/* Provider Types */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
+      <div
+        ref={providerTypesSectionRef}
         className="bg-white rounded-xl p-8 shadow-lg"
       >
         <h3 className="font-title text-2xl font-semibold mb-8 text-center text-gray-800">
@@ -55,12 +237,9 @@ const ProviderBenefits: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {providerBenefitsData.providerTypes.map(
             (providerType: any, index: number) => (
-              <motion.div
+              <div
                 key={providerType.type}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2, delay: 0.05 * index + 0.1 }}
-                whileHover={{ y: -5 }}
+                ref={(el) => (providerTypeCardsRef.current[index] = el)}
                 className="bg-white rounded-lg overflow-hidden shadow-md h-full"
               >
                 <div className="bg-primary p-4">
@@ -82,17 +261,15 @@ const ProviderBenefits: React.FC = () => {
                     )}
                   </ul>
                 </div>
-              </motion.div>
+              </div>
             )
           )}
         </div>
-      </motion.div>
+      </div>
 
       {/* Why Working With Us Is Beneficial */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
+      <div
+        ref={whyUsSectionRef}
         className="bg-gradient-to-r from-primary/10 to-purple-100 rounded-xl p-8 shadow-md"
       >
         <h3 className="font-title text-2xl font-semibold mb-6 text-gray-800">
@@ -170,7 +347,7 @@ const ProviderBenefits: React.FC = () => {
             </ul>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

@@ -1,16 +1,117 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useRef, useEffect } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { forProvidersPageData, prescriptionMethodsData } from "../data";
+import { TitleSectionAnimation } from "../../../components/utils/GSAPAnimations";
+
+// Register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
 
 const HomePage: React.FC = () => {
+  const prescriptionSectionRef = useRef<HTMLDivElement>(null);
+  const emrSectionRef = useRef<HTMLDivElement>(null);
+  const methodCardsRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Set up GSAP animations
+  useEffect(() => {
+    // Prescription section animation
+    if (prescriptionSectionRef.current) {
+      gsap.fromTo(
+        prescriptionSectionRef.current,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: prescriptionSectionRef.current,
+            start: "top bottom-=100",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }
+
+    // Method cards staggered animation
+    if (methodCardsRef.current.filter(Boolean).length > 0) {
+      gsap.fromTo(
+        methodCardsRef.current.filter(Boolean),
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.3,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: prescriptionSectionRef.current,
+            start: "top bottom-=50",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+
+      // Add hover animations to method cards
+      methodCardsRef.current.filter(Boolean).forEach((card) => {
+        if (!card) return;
+
+        card.addEventListener("mouseenter", () => {
+          gsap.to(card, {
+            y: -5,
+            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        });
+
+        card.addEventListener("mouseleave", () => {
+          gsap.to(card, {
+            y: 0,
+            boxShadow:
+              "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        });
+      });
+    }
+
+    // EMR section animation
+    if (emrSectionRef.current) {
+      gsap.fromTo(
+        emrSectionRef.current,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: emrSectionRef.current,
+            start: "top bottom-=100",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }
+
+    // Cleanup
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+
+      // Remove event listeners
+      methodCardsRef.current.filter(Boolean).forEach((card) => {
+        if (!card) return;
+        card.removeEventListener("mouseenter", () => {});
+        card.removeEventListener("mouseleave", () => {});
+      });
+    };
+  }, []);
+
   return (
     <div className="space-y-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="bg-white rounded-xl p-8 shadow-lg border-l-4 border-primary"
-      >
+      <TitleSectionAnimation className="bg-white rounded-xl p-8 shadow-lg border-l-4 border-primary">
         <div className="flex flex-col xl:flex-row items-start gap-6">
           <div className="flex-1">
             <h2 className="font-title text-2xl md:text-3xl font-semibold mb-4 text-gray-800">
@@ -49,12 +150,10 @@ const HomePage: React.FC = () => {
             patient care.
           </p>
         </div>
-      </motion.div>
+      </TitleSectionAnimation>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
+      <div
+        ref={prescriptionSectionRef}
         className="bg-white rounded-xl p-8 shadow-lg"
       >
         <h3 className="font-title text-2xl font-semibold mb-6 text-gray-800">
@@ -66,15 +165,9 @@ const HomePage: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {prescriptionMethodsData.methods.map((method: any, index: number) => (
-            <motion.div
+            <div
               key={method.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.1 * index + 0.3 }}
-              whileHover={{
-                y: -5,
-                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
-              }}
+              ref={(el) => (methodCardsRef.current[index] = el)}
               className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow duration-300 border-l-4 border-primary h-full"
             >
               <div className="text-4xl mb-4">{method.icon}</div>
@@ -92,15 +185,13 @@ const HomePage: React.FC = () => {
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </div>
           ))}
         </div>
-      </motion.div>
+      </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.4 }}
+      <div
+        ref={emrSectionRef}
         className="bg-gradient-to-r from-primary/10 to-purple-100 rounded-xl p-6 shadow-md"
       >
         <div className="flex flex-col md:flex-row items-center gap-6">
@@ -144,7 +235,7 @@ const HomePage: React.FC = () => {
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

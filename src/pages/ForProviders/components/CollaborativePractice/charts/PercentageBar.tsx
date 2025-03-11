@@ -1,51 +1,74 @@
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import React, { useRef, useEffect } from "react";
+import { gsap } from "gsap";
 
 interface PercentageBarProps {
   percentage: number;
-  // Removed unused label prop to fix TS6133 error
   mainColor: string;
   delay: number;
 }
 
 const PercentageBar: React.FC<PercentageBarProps> = ({
   percentage,
-  // Removed unused label parameter
   mainColor,
   delay,
 }) => {
-  const [animatedPercentage, setAnimatedPercentage] = useState(0);
+  const percentageTextRef = useRef<HTMLDivElement>(null);
+  const percentageBarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const interval = setInterval(() => {
-        setAnimatedPercentage((prev) => {
-          if (prev < percentage) {
-            return prev + 2; // Faster animation
+    const percentageText = percentageTextRef.current;
+    const percentageBar = percentageBarRef.current;
+
+    if (!percentageText || !percentageBar) return;
+
+    // Set initial state
+    gsap.set(percentageBar, { width: 0 });
+
+    // Create a timeline for the animations
+    const tl = gsap.timeline({ delay: delay * 0.5 });
+
+    // Animate the percentage bar
+    tl.to(percentageBar, {
+      width: `${percentage}%`,
+      duration: 0.8,
+      ease: "power2.out",
+    });
+
+    // Animate the percentage text counter
+    let counter = { value: 0 };
+    tl.to(
+      counter,
+      {
+        value: percentage,
+        duration: 1,
+        ease: "power2.out",
+        onUpdate: function () {
+          if (percentageText) {
+            percentageText.textContent = `${Math.round(counter.value)}%`;
           }
-          clearInterval(interval);
-          return percentage;
-        });
-      }, 10); // Faster animation
+        },
+      },
+      "<"
+    ); // Start at the same time as the bar animation
 
-      return () => clearInterval(interval);
-    }, delay * 500); // Faster delay
-
-    return () => clearTimeout(timer);
+    return () => {
+      tl.kill();
+    };
   }, [percentage, delay]);
 
   return (
     <div className="relative w-full h-full flex flex-col items-center justify-center">
-      <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-1 sm:mb-2">
-        {animatedPercentage}%
+      <div
+        ref={percentageTextRef}
+        className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-1 sm:mb-2"
+      >
+        0%
       </div>
       <div className="w-full h-4 sm:h-5 lg:h-6 bg-gray-100 rounded-full overflow-hidden">
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: `${animatedPercentage}%` }}
-          transition={{ duration: 0.5, delay: delay * 0.5 }}
+        <div
+          ref={percentageBarRef}
           className="h-full rounded-full"
-          style={{ backgroundColor: mainColor }}
+          style={{ backgroundColor: mainColor, width: 0 }}
         />
       </div>
       <div className="w-full flex justify-between mt-1 text-[10px] sm:text-xs text-gray-500">

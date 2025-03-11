@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useRef, useEffect } from "react";
+import { gsap } from "gsap";
 
 const InsulinCalculator: React.FC = () => {
   const [calculationType, setCalculationType] = useState("mealtime");
@@ -9,6 +9,23 @@ const InsulinCalculator: React.FC = () => {
   const [targetBG, setTargetBG] = useState("");
   const [correctionFactor, setCorrectionFactor] = useState("");
   const [result, setResult] = useState<number | null>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
+
+  // Animation for results
+  useEffect(() => {
+    if (result !== null && resultsRef.current) {
+      // Set initial state
+      gsap.set(resultsRef.current, { opacity: 0, y: 20 });
+
+      // Animate in
+      gsap.to(resultsRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.3,
+        ease: "power2.out",
+      });
+    }
+  }, [result]);
 
   const calculateInsulin = () => {
     if (calculationType === "mealtime") {
@@ -198,12 +215,7 @@ const InsulinCalculator: React.FC = () => {
       </div>
 
       {result !== null && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="rounded-lg overflow-hidden shadow-md"
-        >
+        <div ref={resultsRef} className="rounded-lg overflow-hidden shadow-md">
           <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
             <h3 className="font-title text-lg font-semibold text-gray-800">
               Insulin Dose Result
@@ -249,7 +261,7 @@ const InsulinCalculator: React.FC = () => {
               adjust your insulin regimen without medical supervision.
             </p>
           </div>
-        </motion.div>
+        </div>
       )}
     </div>
   );

@@ -1,8 +1,13 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useRef, useEffect, useContext } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import TimeChart from "../charts/TimeChart";
 import CostSavingsChart from "../charts/CostSavingsChart";
 import SatisfactionChart from "../charts/SatisfactionChart";
+import { AnimationContext } from "../../CollaborativePractice";
+
+// Register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
 
 interface ChartsSectionProps {
   timeSavingsSource: string;
@@ -15,32 +20,217 @@ const ChartsSection: React.FC<ChartsSectionProps> = ({
   costSavingsSource,
   satisfactionSource,
 }) => {
+  const { isInitialLoad } = useContext(AnimationContext);
+
+  // Refs for chart containers
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const timeSavingsRef = useRef<HTMLDivElement>(null);
+  const costSavingsRef = useRef<HTMLDivElement>(null);
+  const satisfactionRef = useRef<HTMLDivElement>(null);
+  const patientOutcomesRef = useRef<HTMLDivElement>(null);
+
+  // Refs for chart content
+  const timeChartRef = useRef<HTMLDivElement>(null);
+  const costChartRef = useRef<HTMLDivElement>(null);
+  const satisfactionChartRef = useRef<HTMLDivElement>(null);
+
+  // Set up GSAP animations
+  useEffect(() => {
+    // Set initial states based on whether this is the initial load or not
+    if (timeSavingsRef.current && timeChartRef.current) {
+      gsap.set(timeSavingsRef.current, {
+        opacity: isInitialLoad ? 1 : 0,
+        x: isInitialLoad ? 0 : -20,
+      });
+      gsap.set(timeChartRef.current, { opacity: isInitialLoad ? 1 : 0 });
+    }
+
+    if (costSavingsRef.current && costChartRef.current) {
+      gsap.set(costSavingsRef.current, {
+        opacity: isInitialLoad ? 1 : 0,
+        x: isInitialLoad ? 0 : 20,
+      });
+      gsap.set(costChartRef.current, { opacity: isInitialLoad ? 1 : 0 });
+    }
+
+    if (satisfactionRef.current && satisfactionChartRef.current) {
+      gsap.set(satisfactionRef.current, {
+        opacity: isInitialLoad ? 1 : 0,
+        y: isInitialLoad ? 0 : 20,
+      });
+      gsap.set(satisfactionChartRef.current, {
+        opacity: isInitialLoad ? 1 : 0,
+      });
+    }
+
+    if (patientOutcomesRef.current) {
+      gsap.set(patientOutcomesRef.current, {
+        opacity: isInitialLoad ? 1 : 0,
+        y: isInitialLoad ? 0 : 20,
+      });
+    }
+
+    // If it's not the initial load, set up scroll-triggered animations
+    if (!isInitialLoad) {
+      // Create a timeline for scroll-triggered animations
+      const scrollTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top bottom-=100",
+          toggleActions: "play none none none",
+        },
+      });
+
+      // Time Savings section animation
+      if (timeSavingsRef.current && timeChartRef.current) {
+        scrollTl
+          .to(timeSavingsRef.current, {
+            opacity: 1,
+            x: 0,
+            duration: 0.4,
+            ease: "power2.out",
+          })
+          .to(
+            timeChartRef.current,
+            {
+              opacity: 1,
+              duration: 0.4,
+              ease: "power2.out",
+            },
+            "-=0.2" // Slight overlap
+          );
+      }
+
+      // Cost Savings section animation
+      if (costSavingsRef.current && costChartRef.current) {
+        scrollTl
+          .to(
+            costSavingsRef.current,
+            {
+              opacity: 1,
+              x: 0,
+              duration: 0.4,
+              ease: "power2.out",
+            },
+            "-=0.2" // Slight overlap
+          )
+          .to(
+            costChartRef.current,
+            {
+              opacity: 1,
+              duration: 0.4,
+              ease: "power2.out",
+            },
+            "-=0.2" // Slight overlap
+          );
+      }
+
+      // Patient Satisfaction section animation
+      if (satisfactionRef.current && satisfactionChartRef.current) {
+        scrollTl
+          .to(
+            satisfactionRef.current,
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.4,
+              ease: "power2.out",
+            },
+            "-=0.2" // Slight overlap
+          )
+          .to(
+            satisfactionChartRef.current,
+            {
+              opacity: 1,
+              duration: 0.4,
+              ease: "power2.out",
+            },
+            "-=0.2" // Slight overlap
+          );
+      }
+
+      // Patient Outcomes section animation
+      if (patientOutcomesRef.current) {
+        scrollTl.to(
+          patientOutcomesRef.current,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            ease: "power2.out",
+          },
+          "-=0.2" // Slight overlap
+        );
+      }
+    }
+
+    // Add hover animations to chart containers
+    const addHoverAnimation = (ref: React.RefObject<HTMLDivElement>) => {
+      if (!ref.current) return;
+
+      ref.current.addEventListener("mouseenter", () => {
+        gsap.to(ref.current, {
+          y: -5,
+          boxShadow: "0 15px 30px -5px rgba(138, 103, 230, 0.2)",
+          duration: 0.2,
+          ease: "power2.out",
+        });
+      });
+
+      ref.current.addEventListener("mouseleave", () => {
+        gsap.to(ref.current, {
+          y: 0,
+          boxShadow:
+            "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+          duration: 0.2,
+          ease: "power2.out",
+        });
+      });
+    };
+
+    addHoverAnimation(timeSavingsRef);
+    addHoverAnimation(costSavingsRef);
+    addHoverAnimation(satisfactionRef);
+    addHoverAnimation(patientOutcomesRef);
+
+    // Cleanup
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+
+      // Remove event listeners
+      const removeHoverListeners = (ref: React.RefObject<HTMLDivElement>) => {
+        if (!ref.current) return;
+        ref.current.removeEventListener("mouseenter", () => {});
+        ref.current.removeEventListener("mouseleave", () => {});
+      };
+
+      removeHoverListeners(timeSavingsRef);
+      removeHoverListeners(costSavingsRef);
+      removeHoverListeners(satisfactionRef);
+      removeHoverListeners(patientOutcomesRef);
+    };
+  }, [isInitialLoad]);
+
   return (
-    <div className="grid grid-cols-1 gap-8 sm:gap-10 lg:gap-12 mb-12">
+    <div
+      className="grid grid-cols-1 gap-8 sm:gap-10 lg:gap-12 mb-12"
+      ref={sectionRef}
+    >
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 lg:gap-10">
         {/* Provider Time Savings */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-          whileHover={{
-            y: -5,
-            boxShadow: "0 15px 30px -5px rgba(138, 103, 230, 0.2)",
-            transition: { duration: 0.2 },
-          }}
+        <div
+          ref={timeSavingsRef}
           className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 shadow-md"
         >
           <h4 className="font-title text-xl font-semibold mb-6 text-gray-800 text-center">
             Provider Time Savings
           </h4>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.5 }}
+          <div
+            ref={timeChartRef}
             className="flex items-center justify-center min-h-[180px] sm:min-h-[200px] lg:min-h-[220px] w-full"
           >
-            <TimeChart delay={0.5} />
-          </motion.div>
+            <TimeChart delay={isInitialLoad ? 0 : 0.5} />
+          </div>
           <div className="mt-4 sm:mt-6 space-y-2 sm:space-y-3">
             <p className="text-xs sm:text-sm text-gray-600 text-center">
               Physicians reported saving an average of 5-7 hours per week on
@@ -51,31 +241,22 @@ const ChartsSection: React.FC<ChartsSectionProps> = ({
               Source: {timeSavingsSource}
             </p>
           </div>
-        </motion.div>
+        </div>
 
         {/* Cost Savings */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4, delay: 0.4 }}
-          whileHover={{
-            y: -5,
-            boxShadow: "0 15px 30px -5px rgba(138, 103, 230, 0.2)",
-            transition: { duration: 0.2 },
-          }}
+        <div
+          ref={costSavingsRef}
           className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 shadow-md"
         >
           <h4 className="font-title text-xl font-semibold mb-6 text-gray-800 text-center">
             Cost Savings
           </h4>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.5 }}
+          <div
+            ref={costChartRef}
             className="flex items-center justify-center min-h-[180px] sm:min-h-[200px] lg:min-h-[220px] w-full"
           >
-            <CostSavingsChart delay={0.5} />
-          </motion.div>
+            <CostSavingsChart delay={isInitialLoad ? 0 : 0.5} />
+          </div>
           <div className="mt-4 sm:mt-6 space-y-2 sm:space-y-3">
             <p className="text-xs sm:text-sm text-gray-600 text-center">
               Per-patient annual cost savings increased over time, reaching an
@@ -85,34 +266,25 @@ const ChartsSection: React.FC<ChartsSectionProps> = ({
               Source: {costSavingsSource}
             </p>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Patient Satisfaction Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 mt-6 sm:mt-4">
         {/* Patient Satisfaction Chart */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.5 }}
-          whileHover={{
-            y: -5,
-            boxShadow: "0 15px 30px -5px rgba(138, 103, 230, 0.2)",
-            transition: { duration: 0.2 },
-          }}
+        <div
+          ref={satisfactionRef}
           className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 shadow-md"
         >
           <h4 className="font-title text-xl font-semibold mb-6 text-gray-800 text-center">
             Patient Satisfaction
           </h4>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.5 }}
+          <div
+            ref={satisfactionChartRef}
             className="flex items-center justify-center min-h-[180px] sm:min-h-[200px] lg:min-h-[220px] w-full"
           >
-            <SatisfactionChart delay={0.5} />
-          </motion.div>
+            <SatisfactionChart delay={isInitialLoad ? 0 : 0.5} />
+          </div>
           <div className="mt-4 sm:mt-6 space-y-2 sm:space-y-3">
             <p className="text-xs sm:text-sm text-gray-600 text-center">
               92% of patients report high satisfaction with pharmacist-managed
@@ -122,18 +294,11 @@ const ChartsSection: React.FC<ChartsSectionProps> = ({
               Source: {satisfactionSource}
             </p>
           </div>
-        </motion.div>
+        </div>
 
         {/* Patient Outcomes */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.6 }}
-          whileHover={{
-            y: -5,
-            boxShadow: "0 15px 30px -5px rgba(138, 103, 230, 0.2)",
-            transition: { duration: 0.2 },
-          }}
+        <div
+          ref={patientOutcomesRef}
           className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 shadow-md"
         >
           <h4 className="font-title text-xl font-semibold mb-6 text-gray-800 text-center">
@@ -226,7 +391,7 @@ const ChartsSection: React.FC<ChartsSectionProps> = ({
               Source: American Journal of Health-System Pharmacy, 2023
             </p>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

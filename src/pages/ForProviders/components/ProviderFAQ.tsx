@@ -1,5 +1,9 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useRef, useEffect } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
 
 interface FAQItem {
   question: string;
@@ -8,10 +12,153 @@ interface FAQItem {
 
 const ProviderFAQ: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const mainSectionRef = useRef<HTMLDivElement>(null);
+  const questionsSectionRef = useRef<HTMLDivElement>(null);
+  const faqItemsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const faqContentRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const contactSectionRef = useRef<HTMLDivElement>(null);
+  const contactButtonsRef = useRef<(HTMLAnchorElement | null)[]>([]);
 
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
+
+  // Handle FAQ accordion animations
+  useEffect(() => {
+    faqContentRefs.current.forEach((content, index) => {
+      if (!content) return;
+
+      if (index === openIndex) {
+        // Get the content height
+        gsap.set(content, { height: "auto", opacity: 1 });
+        gsap.from(content, {
+          height: 0,
+          opacity: 0,
+          duration: 0.3,
+          ease: "power2.out",
+        });
+      } else {
+        gsap.to(content, {
+          height: 0,
+          opacity: 0,
+          duration: 0.3,
+          ease: "power2.in",
+        });
+      }
+    });
+  }, [openIndex]);
+
+  // Set up scroll animations
+  useEffect(() => {
+    // Main section animation
+    if (mainSectionRef.current) {
+      gsap.fromTo(
+        mainSectionRef.current,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: mainSectionRef.current,
+            start: "top bottom-=100",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }
+
+    // FAQ items staggered animation
+    if (faqItemsRef.current.filter(Boolean).length > 0) {
+      gsap.fromTo(
+        faqItemsRef.current.filter(Boolean),
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.3,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: questionsSectionRef.current,
+            start: "top bottom-=50",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }
+
+    // Contact section animation
+    if (contactSectionRef.current) {
+      gsap.fromTo(
+        contactSectionRef.current,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: contactSectionRef.current,
+            start: "top bottom-=100",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }
+
+    // Button hover animations
+    contactButtonsRef.current.filter(Boolean).forEach((button) => {
+      if (!button) return;
+
+      button.addEventListener("mouseenter", () => {
+        gsap.to(button, {
+          scale: 1.05,
+          duration: 0.3,
+          ease: "power2.out",
+        });
+      });
+
+      button.addEventListener("mouseleave", () => {
+        gsap.to(button, {
+          scale: 1,
+          duration: 0.3,
+          ease: "power2.out",
+        });
+      });
+
+      button.addEventListener("mousedown", () => {
+        gsap.to(button, {
+          scale: 0.95,
+          duration: 0.1,
+          ease: "power2.out",
+        });
+      });
+
+      button.addEventListener("mouseup", () => {
+        gsap.to(button, {
+          scale: 1.05,
+          duration: 0.1,
+          ease: "power2.out",
+        });
+      });
+    });
+
+    // Cleanup
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+
+      // Remove event listeners
+      contactButtonsRef.current.filter(Boolean).forEach((button) => {
+        if (!button) return;
+        button.removeEventListener("mouseenter", () => {});
+        button.removeEventListener("mouseleave", () => {});
+        button.removeEventListener("mousedown", () => {});
+        button.removeEventListener("mouseup", () => {});
+      });
+    };
+  }, []);
 
   const faqs: FAQItem[] = [
     {
@@ -58,10 +205,8 @@ const ProviderFAQ: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+      <div
+        ref={mainSectionRef}
         className="bg-white rounded-xl p-8 shadow-lg border-l-4 border-primary"
       >
         <h2 className="font-title text-2xl md:text-3xl font-semibold mb-4 text-gray-800">
@@ -72,13 +217,11 @@ const ProviderFAQ: React.FC = () => {
           and utilizing our provider services.
         </p>
 
-        <div className="space-y-4">
+        <div ref={questionsSectionRef} className="space-y-4">
           {faqs.map((faq, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.1 * index }}
+              ref={(el) => (faqItemsRef.current[index] = el)}
               className="border border-gray-200 rounded-lg overflow-hidden"
             >
               <button
@@ -92,39 +235,33 @@ const ProviderFAQ: React.FC = () => {
                 <span className="font-title font-semibold text-lg">
                   {faq.question}
                 </span>
-                <motion.span
-                  animate={{ rotate: openIndex === index ? 180 : 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="text-xl"
+                <span
+                  className="text-xl transform transition-transform duration-300"
+                  style={{
+                    transform:
+                      openIndex === index ? "rotate(180deg)" : "rotate(0deg)",
+                  }}
                 >
                   ↓
-                </motion.span>
+                </span>
               </button>
-              <AnimatePresence>
-                {openIndex === index && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
-                  >
-                    <div className="p-5 bg-gray-50 border-t border-gray-200">
-                      <p className="font-body text-gray-700">{faq.answer}</p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
+              <div
+                ref={(el) => (faqContentRefs.current[index] = el)}
+                className="overflow-hidden"
+                style={{ height: 0, opacity: 0 }}
+              >
+                <div className="p-5 bg-gray-50 border-t border-gray-200">
+                  <p className="font-body text-gray-700">{faq.answer}</p>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
-      </motion.div>
+      </div>
 
       {/* Still Have Questions */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
+      <div
+        ref={contactSectionRef}
         className="bg-gradient-to-r from-primary/10 to-purple-100 rounded-xl p-8 shadow-md"
       >
         <div className="text-center max-w-3xl mx-auto">
@@ -137,25 +274,23 @@ const ProviderFAQ: React.FC = () => {
             opportunities, or how we can support your practice.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <motion.a
+            <a
+              ref={(el) => (contactButtonsRef.current[0] = el)}
               href="/contact"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               className="inline-block bg-primary text-white font-body px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors duration-300 shadow-md"
             >
               Contact Us
-            </motion.a>
-            <motion.a
+            </a>
+            <a
+              ref={(el) => (contactButtonsRef.current[1] = el)}
               href="tel:+15551234567"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               className="inline-block bg-white text-primary font-body px-6 py-3 rounded-md hover:bg-gray-50 transition-colors duration-300 shadow-md border border-primary/20"
             >
               Call Provider Hotline
-            </motion.a>
+            </a>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

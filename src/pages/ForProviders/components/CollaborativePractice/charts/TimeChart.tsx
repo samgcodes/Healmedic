@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+import { gsap } from "gsap";
 
 interface TimeChartProps {
   delay: number;
@@ -7,7 +7,11 @@ interface TimeChartProps {
 
 const TimeChart: React.FC<TimeChartProps> = ({ delay }) => {
   const [animatedValue, setAnimatedValue] = useState(0);
+  const totalValueRef = useRef<HTMLDivElement>(null);
+  const annualTotalRef = useRef<HTMLDivElement>(null);
+  const categoryRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  // Initialize animation
   useEffect(() => {
     const timer = setTimeout(() => {
       const interval = setInterval(() => {
@@ -24,6 +28,57 @@ const TimeChart: React.FC<TimeChartProps> = ({ delay }) => {
     }, delay * 500);
 
     return () => clearTimeout(timer);
+  }, [delay]);
+
+  // Set up GSAP animations
+  useEffect(() => {
+    // Animate the main time savings number
+    if (totalValueRef.current) {
+      gsap.fromTo(
+        totalValueRef.current,
+        { scale: 0.5, opacity: 0 },
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.5,
+          delay: delay,
+          ease: "back.out(1.7)",
+        }
+      );
+    }
+
+    // Animate the categories
+    if (categoryRefs.current.filter(Boolean).length > 0) {
+      categoryRefs.current.filter(Boolean).forEach((category, index) => {
+        if (!category) return;
+
+        gsap.fromTo(
+          category,
+          { opacity: 0, y: 10 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.3,
+            delay: delay + 0.1 + index * 0.1,
+            ease: "power2.out",
+          }
+        );
+      });
+    }
+
+    // Animate the annual total
+    if (annualTotalRef.current) {
+      gsap.fromTo(
+        annualTotalRef.current,
+        { opacity: 0 },
+        {
+          opacity: 1,
+          duration: 0.5,
+          delay: delay + 0.6,
+          ease: "power2.out",
+        }
+      );
+    }
   }, [delay]);
 
   // Time savings data
@@ -44,14 +99,9 @@ const TimeChart: React.FC<TimeChartProps> = ({ delay }) => {
     <div className="flex flex-col items-center justify-center w-full">
       {/* Main time savings number */}
       <div className="text-center mb-3">
-        <motion.div
-          initial={{ scale: 0.5, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.5, delay: delay }}
-          className="text-4xl font-bold text-primary"
-        >
+        <div ref={totalValueRef} className="text-4xl font-bold text-primary">
           {animatedTotal}
-        </motion.div>
+        </div>
         <div className="text-sm text-gray-600 font-medium">
           hours saved weekly
         </div>
@@ -60,11 +110,9 @@ const TimeChart: React.FC<TimeChartProps> = ({ delay }) => {
       {/* Categories */}
       <div className="w-full grid grid-cols-2 gap-2">
         {categories.map((category, index) => (
-          <motion.div
+          <div
             key={category.name}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: delay + 0.1 + index * 0.1 }}
+            ref={(el) => (categoryRefs.current[index] = el)}
             className="flex items-center bg-gray-50 rounded-lg p-2"
           >
             <span className="text-lg mr-2">{category.icon}</span>
@@ -76,19 +124,17 @@ const TimeChart: React.FC<TimeChartProps> = ({ delay }) => {
                 {((category.hours * animatedValue) / 100).toFixed(1)} hrs
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
       {/* Annual total */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: delay + 0.6 }}
+      <div
+        ref={annualTotalRef}
         className="mt-3 text-xs text-gray-500 text-center"
       >
         That's over 300 hours saved annually!
-      </motion.div>
+      </div>
     </div>
   );
 };

@@ -1,7 +1,18 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useRef, useEffect } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
 
 const ProviderResources: React.FC = () => {
+  const mainSectionRef = useRef<HTMLDivElement>(null);
+  const formResourcesRef = useRef<(HTMLDivElement | null)[]>([]);
+  const educationalResourcesRef = useRef<(HTMLDivElement | null)[]>([]);
+  const customResourcesSectionRef = useRef<HTMLDivElement>(null);
+  const downloadButtonsRef = useRef<(HTMLAnchorElement | null)[]>([]);
+  const contactButtonRef = useRef<HTMLAnchorElement>(null);
+
   const resources = [
     {
       title: "Referral Form",
@@ -58,12 +69,244 @@ const ProviderResources: React.FC = () => {
     },
   ];
 
+  // Set up GSAP animations
+  useEffect(() => {
+    // Main section animation
+    if (mainSectionRef.current) {
+      gsap.fromTo(
+        mainSectionRef.current,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: mainSectionRef.current,
+            start: "top bottom-=100",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }
+
+    // Form resources staggered animation
+    if (formResourcesRef.current.filter(Boolean).length > 0) {
+      gsap.fromTo(
+        formResourcesRef.current.filter(Boolean),
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.3,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: mainSectionRef.current,
+            start: "top bottom-=50",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+
+      // Add hover animations to form resource cards
+      formResourcesRef.current.filter(Boolean).forEach((card) => {
+        if (!card) return;
+
+        card.addEventListener("mouseenter", () => {
+          gsap.to(card, {
+            y: -5,
+            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        });
+
+        card.addEventListener("mouseleave", () => {
+          gsap.to(card, {
+            y: 0,
+            boxShadow:
+              "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        });
+      });
+    }
+
+    // Educational resources staggered animation
+    if (educationalResourcesRef.current.filter(Boolean).length > 0) {
+      gsap.fromTo(
+        educationalResourcesRef.current.filter(Boolean),
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.3,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: educationalResourcesRef.current[0],
+            start: "top bottom-=50",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+
+      // Add hover animations to educational resource cards
+      educationalResourcesRef.current.filter(Boolean).forEach((card) => {
+        if (!card) return;
+
+        card.addEventListener("mouseenter", () => {
+          gsap.to(card, {
+            y: -5,
+            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        });
+
+        card.addEventListener("mouseleave", () => {
+          gsap.to(card, {
+            y: 0,
+            boxShadow:
+              "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        });
+      });
+    }
+
+    // Custom resources section animation
+    if (customResourcesSectionRef.current) {
+      gsap.fromTo(
+        customResourcesSectionRef.current,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: customResourcesSectionRef.current,
+            start: "top bottom-=100",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }
+
+    // Download buttons hover animations
+    downloadButtonsRef.current.filter(Boolean).forEach((button) => {
+      if (!button) return;
+
+      button.addEventListener("mouseenter", () => {
+        gsap.to(button, {
+          scale: 1.05,
+          duration: 0.3,
+          ease: "power2.out",
+        });
+      });
+
+      button.addEventListener("mouseleave", () => {
+        gsap.to(button, {
+          scale: 1,
+          duration: 0.3,
+          ease: "power2.out",
+        });
+      });
+
+      button.addEventListener("mousedown", () => {
+        gsap.to(button, {
+          scale: 0.95,
+          duration: 0.1,
+          ease: "power2.out",
+        });
+      });
+
+      button.addEventListener("mouseup", () => {
+        gsap.to(button, {
+          scale: 1.05,
+          duration: 0.1,
+          ease: "power2.out",
+        });
+      });
+    });
+
+    // Contact button hover animation
+    if (contactButtonRef.current) {
+      contactButtonRef.current.addEventListener("mouseenter", () => {
+        gsap.to(contactButtonRef.current, {
+          scale: 1.05,
+          duration: 0.3,
+          ease: "power2.out",
+        });
+      });
+
+      contactButtonRef.current.addEventListener("mouseleave", () => {
+        gsap.to(contactButtonRef.current, {
+          scale: 1,
+          duration: 0.3,
+          ease: "power2.out",
+        });
+      });
+
+      contactButtonRef.current.addEventListener("mousedown", () => {
+        gsap.to(contactButtonRef.current, {
+          scale: 0.95,
+          duration: 0.1,
+          ease: "power2.out",
+        });
+      });
+
+      contactButtonRef.current.addEventListener("mouseup", () => {
+        gsap.to(contactButtonRef.current, {
+          scale: 1.05,
+          duration: 0.1,
+          ease: "power2.out",
+        });
+      });
+    }
+
+    // Cleanup
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+
+      // Remove event listeners
+      formResourcesRef.current.filter(Boolean).forEach((card) => {
+        if (!card) return;
+        card.removeEventListener("mouseenter", () => {});
+        card.removeEventListener("mouseleave", () => {});
+      });
+
+      educationalResourcesRef.current.filter(Boolean).forEach((card) => {
+        if (!card) return;
+        card.removeEventListener("mouseenter", () => {});
+        card.removeEventListener("mouseleave", () => {});
+      });
+
+      downloadButtonsRef.current.filter(Boolean).forEach((button) => {
+        if (!button) return;
+        button.removeEventListener("mouseenter", () => {});
+        button.removeEventListener("mouseleave", () => {});
+        button.removeEventListener("mousedown", () => {});
+        button.removeEventListener("mouseup", () => {});
+      });
+
+      if (contactButtonRef.current) {
+        contactButtonRef.current.removeEventListener("mouseenter", () => {});
+        contactButtonRef.current.removeEventListener("mouseleave", () => {});
+        contactButtonRef.current.removeEventListener("mousedown", () => {});
+        contactButtonRef.current.removeEventListener("mouseup", () => {});
+      }
+    };
+  }, []);
+
   return (
     <div className="space-y-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+      <div
+        ref={mainSectionRef}
         className="bg-white rounded-xl p-8 shadow-lg border-l-4 border-primary"
       >
         <h2 className="font-title text-2xl md:text-3xl font-semibold mb-4 text-gray-800">
@@ -80,15 +323,9 @@ const ProviderResources: React.FC = () => {
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {resources.map((resource, index) => (
-            <motion.div
+            <div
               key={resource.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.1 * index }}
-              whileHover={{
-                y: -5,
-                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
-              }}
+              ref={(el) => (formResourcesRef.current[index] = el)}
               className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow duration-300 h-full flex flex-col"
             >
               <div className="text-4xl mb-4">{resource.icon}</div>
@@ -99,16 +336,15 @@ const ProviderResources: React.FC = () => {
                 {resource.description}
               </p>
               <div className="mt-auto pt-4">
-                <motion.a
+                <a
+                  ref={(el) => (downloadButtonsRef.current[index] = el)}
                   href={resource.downloadLink}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
                   className="inline-block bg-primary text-white font-body px-4 py-2 rounded-md hover:bg-opacity-90 transition-colors duration-300"
                 >
                   Download
-                </motion.a>
+                </a>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -118,15 +354,9 @@ const ProviderResources: React.FC = () => {
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {educationalResources.map((resource, index) => (
-            <motion.div
+            <div
               key={resource.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.1 * index }}
-              whileHover={{
-                y: -5,
-                boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
-              }}
+              ref={(el) => (educationalResourcesRef.current[index] = el)}
               className="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow duration-300 h-full flex flex-col"
             >
               <div className="text-4xl mb-4">{resource.icon}</div>
@@ -137,25 +367,24 @@ const ProviderResources: React.FC = () => {
                 {resource.description}
               </p>
               <div className="mt-auto pt-4">
-                <motion.a
+                <a
+                  ref={(el) =>
+                    (downloadButtonsRef.current[index + resources.length] = el)
+                  }
                   href={resource.downloadLink}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
                   className="inline-block bg-primary text-white font-body px-4 py-2 rounded-md hover:bg-opacity-90 transition-colors duration-300"
                 >
                   Download
-                </motion.a>
+                </a>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
-      </motion.div>
+      </div>
 
       {/* Contact for Custom Resources */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
+      <div
+        ref={customResourcesSectionRef}
         className="bg-gradient-to-r from-primary/10 to-purple-100 rounded-xl p-8 shadow-md"
       >
         <div className="flex flex-col md:flex-row items-center gap-8">
@@ -188,17 +417,16 @@ const ProviderResources: React.FC = () => {
               materials, custom forms, or practice-specific protocols, our team
               is ready to help.
             </p>
-            <motion.a
+            <a
+              ref={contactButtonRef}
               href="/contact"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               className="inline-block bg-primary text-white font-body px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors duration-300 shadow-md"
             >
               Contact Us
-            </motion.a>
+            </a>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

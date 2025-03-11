@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Doughnut } from "react-chartjs-2";
-import { motion } from "framer-motion";
+import { gsap } from "gsap";
 import { useChartCleanup } from "./ChartConfig";
 
 interface SatisfactionChartProps {
@@ -10,10 +10,12 @@ interface SatisfactionChartProps {
 const SatisfactionChart: React.FC<SatisfactionChartProps> = ({ delay }) => {
   const [animationProgress, setAnimationProgress] = useState(0);
   const chartRef = useRef<any>(null);
+  const percentageDisplayRef = useRef<HTMLDivElement>(null);
 
   // Use the chart cleanup hook
   useChartCleanup(chartRef);
 
+  // Set up animation progress
   useEffect(() => {
     const timer = setTimeout(() => {
       const interval = setInterval(() => {
@@ -30,6 +32,24 @@ const SatisfactionChart: React.FC<SatisfactionChartProps> = ({ delay }) => {
     }, delay * 500);
 
     return () => clearTimeout(timer);
+  }, [delay]);
+
+  // Set up GSAP animations
+  useEffect(() => {
+    // Animate the percentage display
+    if (percentageDisplayRef.current) {
+      gsap.fromTo(
+        percentageDisplayRef.current,
+        { opacity: 0, scale: 0.9 },
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.5,
+          delay: delay + 0.3,
+          ease: "back.out(1.7)",
+        }
+      );
+    }
   }, [delay]);
 
   // Satisfaction data
@@ -79,16 +99,14 @@ const SatisfactionChart: React.FC<SatisfactionChartProps> = ({ delay }) => {
         </div>
 
         {/* Percentage display - perfectly centered */}
-        <motion.div
+        <div
+          ref={percentageDisplayRef}
           className="absolute inset-0 flex items-center justify-center"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: delay + 0.3 }}
         >
           <div className="text-3xl sm:text-4xl font-bold text-primary mt-2">
             {animatedValue}%
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Scale indicators - better aligned with gauge endpoints */}

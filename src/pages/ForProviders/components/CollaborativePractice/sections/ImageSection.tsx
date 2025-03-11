@@ -1,5 +1,10 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useRef, useEffect, useContext } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { AnimationContext } from "../../CollaborativePractice";
+
+// Register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
 
 interface ImageSectionProps {
   imageDescription: string;
@@ -10,13 +15,51 @@ const ImageSection: React.FC<ImageSectionProps> = ({
   imageDescription,
   imageUrl,
 }) => {
+  const { isInitialLoad } = useContext(AnimationContext);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  // Set up GSAP animations
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    // Set initial state for the section
+    gsap.set(sectionRef.current, {
+      opacity: isInitialLoad ? 1 : 0,
+      y: isInitialLoad ? 0 : 20,
+    });
+
+    // If it's not the initial load, set up scroll-triggered animations
+    if (!isInitialLoad) {
+      // Create a timeline for scroll-triggered animations
+      const scrollTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top bottom-=100",
+          toggleActions: "play none none none",
+        },
+      });
+
+      // Add the animation to the timeline
+      scrollTl.to(sectionRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.4,
+        ease: "power2.out",
+      });
+    }
+
+    // Cleanup
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => {
+        if (trigger.vars.trigger === sectionRef.current) {
+          trigger.kill();
+        }
+      });
+    };
+  }, [isInitialLoad]);
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: 0.3 }}
-      className="max-w-3xl mx-auto"
-    >
+    <div ref={sectionRef} className="max-w-3xl mx-auto">
       <div className="bg-gray-200 rounded-xl overflow-hidden flex items-center justify-center shadow-md aspect-video relative">
         {imageUrl ? (
           <img
@@ -44,7 +87,7 @@ const ImageSection: React.FC<ImageSectionProps> = ({
           </>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 };
 

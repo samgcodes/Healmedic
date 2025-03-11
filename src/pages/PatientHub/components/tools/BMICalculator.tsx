@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React, { useState, useRef, useEffect } from "react";
+import { gsap } from "gsap";
 
 const BMICalculator: React.FC = () => {
   const [height, setHeight] = useState("");
@@ -7,6 +7,23 @@ const BMICalculator: React.FC = () => {
   const [unit, setUnit] = useState("metric"); // metric or imperial
   const [bmi, setBmi] = useState<number | null>(null);
   const [category, setCategory] = useState("");
+  const resultsRef = useRef<HTMLDivElement>(null);
+
+  // Animation for results
+  useEffect(() => {
+    if (bmi !== null && resultsRef.current) {
+      // Set initial state
+      gsap.set(resultsRef.current, { opacity: 0, y: 20 });
+
+      // Animate in
+      gsap.to(resultsRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.3,
+        ease: "power2.out",
+      });
+    }
+  }, [bmi]);
 
   const calculateBMI = () => {
     if (!height || !weight) {
@@ -155,12 +172,7 @@ const BMICalculator: React.FC = () => {
       </div>
 
       {bmi !== null && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="rounded-lg overflow-hidden shadow-md"
-        >
+        <div ref={resultsRef} className="rounded-lg overflow-hidden shadow-md">
           <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
             <h3 className="font-title text-lg font-semibold text-gray-800">
               Your Results
@@ -191,7 +203,7 @@ const BMICalculator: React.FC = () => {
               <li>• Obesity: BMI 30 or greater</li>
             </ul>
           </div>
-        </motion.div>
+        </div>
       )}
     </div>
   );

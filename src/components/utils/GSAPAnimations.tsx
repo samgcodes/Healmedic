@@ -343,10 +343,11 @@ export const TitleSectionAnimation: React.FC<TitleSectionAnimationProps> = ({
     const container = containerRef.current;
     if (!container) return;
 
-    // Find the title, description, and image elements
+    // Find the title, description, image elements, and tip box
     const title = container.querySelector("h2");
     const description = container.querySelector("p");
     const imageContainer = container.querySelector(".aspect-square");
+    const tipBox = container.querySelector(".bg-blue-50");
 
     // Set initial states
     gsap.set(container, { opacity: 1 }); // Container is visible
@@ -355,6 +356,10 @@ export const TitleSectionAnimation: React.FC<TitleSectionAnimationProps> = ({
 
     if (imageContainer) {
       gsap.set(imageContainer, { opacity: 0, scale: 0.9 });
+    }
+
+    if (tipBox) {
+      gsap.set(tipBox, { opacity: 0, y: 15 });
     }
 
     // Create a timeline for the animation
@@ -397,6 +402,20 @@ export const TitleSectionAnimation: React.FC<TitleSectionAnimationProps> = ({
           ease: "back.out(1.2)",
         },
         "-=0.4" // Overlap with description animation
+      );
+    }
+
+    // Animate tip box
+    if (tipBox) {
+      tl.to(
+        tipBox,
+        {
+          opacity: 1,
+          y: 0,
+          duration: isMobile ? 0.4 : 0.6,
+          ease: "power2.out",
+        },
+        "-=0.2" // Slight overlap with previous animations
       );
     }
 

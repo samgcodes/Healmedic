@@ -1,55 +1,323 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useRef, useEffect } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { TitleSectionAnimation } from "../../../components/utils/GSAPAnimations";
+
+// Register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
 
 const AdvancedPracticePharmacist: React.FC = () => {
-  // Commented out unused array to fix TS6133 error
-  /* const capabilities = [
-    {
-      title: "Medication Management",
-      description:
-        "Perform comprehensive medication management and adjust medications within the scope of a collaborative practice agreement.",
-      icon: "💊",
-    },
-    {
-      title: "Patient Assessment",
-      description:
-        "Conduct physical assessments, order and interpret laboratory tests to monitor and manage drug therapies.",
-      icon: "🔬",
-    },
-    {
-      title: "Disease Management",
-      description:
-        "Independently manage chronic diseases like diabetes, hypertension, and dyslipidemia through evidence-based protocols.",
-      icon: "📊",
-    },
-    {
-      title: "Immunizations",
-      description:
-        "Administer vaccines and provide comprehensive immunization services beyond standard pharmacy practice.",
-      icon: "💉",
-    },
-    {
-      title: "Health Education",
-      description:
-        "Deliver advanced patient education and counseling for complex medication regimens and health conditions.",
-      icon: "📚",
-    },
-    {
-      title: "Clinical Consultation",
-      description:
-        "Provide expert clinical consultation to healthcare providers on complex pharmacotherapy issues.",
-      icon: "👨‍⚕️",
-    },
-  ]; */
+  // Refs for elements that need animations
+  const certificationSectionRef = useRef<HTMLDivElement>(null);
+  const certCardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const clinicalCapabilitiesRef = useRef<HTMLDivElement>(null);
+  const patientCareListRef = useRef<HTMLUListElement>(null);
+  const medicationListRef = useRef<HTMLUListElement>(null);
+  const impactSectionRef = useRef<HTMLDivElement>(null);
+  const statCardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const percentageRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const quoteBoxRef = useRef<HTMLDivElement>(null);
+
+  // Initialize refs arrays
+  useEffect(() => {
+    certCardRefs.current = certCardRefs.current.slice(0, 2);
+    statCardRefs.current = statCardRefs.current.slice(0, 3);
+    percentageRefs.current = percentageRefs.current.slice(0, 3);
+  }, []);
+
+  // Certification section animations
+  useEffect(() => {
+    if (!certificationSectionRef.current) return;
+
+    // Animate the certification section
+    gsap.fromTo(
+      certificationSectionRef.current,
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        delay: 0.2,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: certificationSectionRef.current,
+          start: "top bottom-=100",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
+    // Animate certification cards with stagger
+    if (certCardRefs.current.filter(Boolean).length > 0) {
+      gsap.fromTo(
+        certCardRefs.current.filter(Boolean),
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.3,
+          stagger: 0.1,
+          delay: 0.3,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: certificationSectionRef.current,
+            start: "top bottom-=50",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+
+      // Add hover animations to certification cards
+      certCardRefs.current.filter(Boolean).forEach((card) => {
+        if (!card) return;
+
+        card.addEventListener("mouseenter", () => {
+          gsap.to(card, {
+            y: -5,
+            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        });
+
+        card.addEventListener("mouseleave", () => {
+          gsap.to(card, {
+            y: 0,
+            boxShadow:
+              "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+            duration: 0.3,
+            ease: "power2.out",
+          });
+        });
+      });
+    }
+
+    // Cleanup
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => {
+        if (trigger.vars.trigger === certificationSectionRef.current) {
+          trigger.kill();
+        }
+      });
+
+      // Remove event listeners
+      certCardRefs.current.filter(Boolean).forEach((card) => {
+        if (!card) return;
+        card.removeEventListener("mouseenter", () => {});
+        card.removeEventListener("mouseleave", () => {});
+      });
+    };
+  }, []);
+
+  // Clinical capabilities section animations
+  useEffect(() => {
+    if (
+      !clinicalCapabilitiesRef.current ||
+      !patientCareListRef.current ||
+      !medicationListRef.current
+    )
+      return;
+
+    // Animate the clinical capabilities section
+    gsap.fromTo(
+      clinicalCapabilitiesRef.current,
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        delay: 0.3,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: clinicalCapabilitiesRef.current,
+          start: "top bottom-=100",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
+    // Animate list items with stagger
+    const patientCareItems = patientCareListRef.current.querySelectorAll("li");
+    const medicationItems = medicationListRef.current.querySelectorAll("li");
+
+    gsap.fromTo(
+      patientCareItems,
+      { opacity: 0, x: -10 },
+      {
+        opacity: 1,
+        x: 0,
+        duration: 0.3,
+        stagger: 0.1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: patientCareListRef.current,
+          start: "top bottom-=50",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
+    gsap.fromTo(
+      medicationItems,
+      { opacity: 0, x: -10 },
+      {
+        opacity: 1,
+        x: 0,
+        duration: 0.3,
+        stagger: 0.1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: medicationListRef.current,
+          start: "top bottom-=50",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
+    // Cleanup
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => {
+        if (
+          trigger.vars.trigger === clinicalCapabilitiesRef.current ||
+          trigger.vars.trigger === patientCareListRef.current ||
+          trigger.vars.trigger === medicationListRef.current
+        ) {
+          trigger.kill();
+        }
+      });
+    };
+  }, []);
+
+  // Impact statistics section animations
+  useEffect(() => {
+    if (!impactSectionRef.current) return;
+
+    // Animate the impact section
+    gsap.fromTo(
+      impactSectionRef.current,
+      { opacity: 0, y: 20 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        delay: 0.4,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: impactSectionRef.current,
+          start: "top bottom-=100",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
+    // Animate stat cards with stagger
+    if (statCardRefs.current.filter(Boolean).length > 0) {
+      gsap.fromTo(
+        statCardRefs.current.filter(Boolean),
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.3,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: impactSectionRef.current,
+            start: "top bottom-=50",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+
+      // Add hover animations to stat cards
+      statCardRefs.current.filter(Boolean).forEach((card) => {
+        if (!card) return;
+
+        card.addEventListener("mouseenter", () => {
+          gsap.to(card, {
+            y: -5,
+            boxShadow: "0 12px 25px -5px rgba(0, 0, 0, 0.1)",
+            duration: 0.2,
+            ease: "power2.out",
+          });
+        });
+
+        card.addEventListener("mouseleave", () => {
+          gsap.to(card, {
+            y: 0,
+            boxShadow:
+              "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+            duration: 0.2,
+            ease: "power2.out",
+          });
+        });
+      });
+    }
+
+    // Animate percentage numbers with scale effect
+    if (percentageRefs.current.filter(Boolean).length > 0) {
+      percentageRefs.current.filter(Boolean).forEach((percentage, index) => {
+        if (!percentage) return;
+
+        gsap.fromTo(
+          percentage,
+          { scale: 0.5, opacity: 0 },
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.5,
+            delay: 0.1 * (index + 1),
+            ease: "back.out(1.7)",
+            scrollTrigger: {
+              trigger: percentage,
+              start: "top bottom-=50",
+              toggleActions: "play none none none",
+            },
+          }
+        );
+      });
+    }
+
+    // Animate quote box
+    if (quoteBoxRef.current) {
+      gsap.fromTo(
+        quoteBoxRef.current,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          delay: 0.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: quoteBoxRef.current,
+            start: "top bottom-=50",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }
+
+    // Cleanup
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => {
+        if (trigger.vars.trigger === impactSectionRef.current) {
+          trigger.kill();
+        }
+      });
+
+      // Remove event listeners
+      statCardRefs.current.filter(Boolean).forEach((card) => {
+        if (!card) return;
+        card.removeEventListener("mouseenter", () => {});
+        card.removeEventListener("mouseleave", () => {});
+      });
+    };
+  }, []);
 
   return (
     <div className="space-y-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="bg-white rounded-xl p-8 shadow-lg border-l-4 border-primary"
-      >
+      <TitleSectionAnimation className="bg-white rounded-xl p-8 shadow-lg border-l-4 border-primary">
         <div className="flex flex-col xl:flex-row items-start gap-6">
           <div className="flex-1">
             <h2 className="font-title text-2xl md:text-3xl font-semibold mb-4 text-gray-800">
@@ -83,13 +351,11 @@ const AdvancedPracticePharmacist: React.FC = () => {
             </div>
           </div>
         </div>
-      </motion.div>
+      </TitleSectionAnimation>
 
       {/* APh Certification Requirements */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
+      <div
+        ref={certificationSectionRef}
         className="bg-white rounded-xl p-8 shadow-lg"
       >
         <h3 className="font-title text-2xl font-semibold mb-6 text-gray-800">
@@ -103,10 +369,8 @@ const AdvancedPracticePharmacist: React.FC = () => {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.3 }}
+          <div
+            ref={(el) => (certCardRefs.current[0] = el)}
             className="bg-white rounded-lg p-6 shadow-md border-l-4 border-primary h-full"
           >
             <div className="text-4xl mb-4">🎓</div>
@@ -117,12 +381,10 @@ const AdvancedPracticePharmacist: React.FC = () => {
               Completion of board-certified residencies, fellowships, or
               certification programs in specialized areas of pharmacy practice.
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.4 }}
+          <div
+            ref={(el) => (certCardRefs.current[1] = el)}
             className="bg-white rounded-lg p-6 shadow-md border-l-4 border-primary h-full"
           >
             <div className="text-4xl mb-4">⏱️</div>
@@ -134,15 +396,13 @@ const AdvancedPracticePharmacist: React.FC = () => {
               including at least one year of experience providing clinical
               services to patients.
             </p>
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Enhanced Clinical Capabilities (Legal Authority) */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
+      <div
+        ref={clinicalCapabilitiesRef}
         className="bg-white rounded-xl p-8 shadow-lg"
       >
         <h3 className="font-title text-2xl font-semibold mb-6 text-gray-800">
@@ -158,40 +418,25 @@ const AdvancedPracticePharmacist: React.FC = () => {
             <h4 className="font-title text-xl font-semibold mb-4 text-primary">
               Patient Care Services
             </h4>
-            <ul className="space-y-3">
-              <motion.li
-                className="flex items-start"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, delay: 0.1 }}
-              >
+            <ul ref={patientCareListRef} className="space-y-3">
+              <li className="flex items-start">
                 <span className="text-primary mr-2 mt-1 font-bold">✓</span>
                 <span className="font-body text-gray-700">
                   Perform comprehensive patient assessments
                 </span>
-              </motion.li>
-              <motion.li
-                className="flex items-start"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, delay: 0.2 }}
-              >
+              </li>
+              <li className="flex items-start">
                 <span className="text-primary mr-2 mt-1 font-bold">✓</span>
                 <span className="font-body text-gray-700">
                   Order and interpret drug therapy-related tests
                 </span>
-              </motion.li>
-              <motion.li
-                className="flex items-start"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, delay: 0.3 }}
-              >
+              </li>
+              <li className="flex items-start">
                 <span className="text-primary mr-2 mt-1 font-bold">✓</span>
                 <span className="font-body text-gray-700">
                   Refer patients to other healthcare providers
                 </span>
-              </motion.li>
+              </li>
             </ul>
           </div>
 
@@ -199,53 +444,36 @@ const AdvancedPracticePharmacist: React.FC = () => {
             <h4 className="font-title text-xl font-semibold mb-4 text-primary">
               Medication Management
             </h4>
-            <ul className="space-y-3">
-              <motion.li
-                className="flex items-start"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, delay: 0.1 }}
-              >
+            <ul ref={medicationListRef} className="space-y-3">
+              <li className="flex items-start">
                 <span className="text-primary mr-2 mt-1 font-bold">✓</span>
                 <span className="font-body text-gray-700">
                   Initiate, adjust, and discontinue drug therapy pursuant to a
                   collaborative practice agreement
                 </span>
-              </motion.li>
-              <motion.li
-                className="flex items-start"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, delay: 0.2 }}
-              >
+              </li>
+              <li className="flex items-start">
                 <span className="text-primary mr-2 mt-1 font-bold">✓</span>
                 <span className="font-body text-gray-700">
                   Participate in the evaluation and management of diseases and
                   health conditions in collaboration with other healthcare
                   providers
                 </span>
-              </motion.li>
-              <motion.li
-                className="flex items-start"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, delay: 0.3 }}
-              >
+              </li>
+              <li className="flex items-start">
                 <span className="text-primary mr-2 mt-1 font-bold">✓</span>
                 <span className="font-body text-gray-700">
                   Develop and implement medication therapy management plans
                 </span>
-              </motion.li>
+              </li>
             </ul>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* APh Impact Statistics */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.4 }}
+      <div
+        ref={impactSectionRef}
         className="bg-gradient-to-r from-primary/10 to-purple-100 rounded-xl p-8 shadow-md"
       >
         <h3 className="font-title text-2xl font-semibold mb-6 text-center text-gray-800">
@@ -253,80 +481,62 @@ const AdvancedPracticePharmacist: React.FC = () => {
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <motion.div
+          <div
+            ref={(el) => (statCardRefs.current[0] = el)}
             className="bg-white rounded-xl p-6 shadow-md text-center"
-            whileHover={{
-              y: -5,
-              boxShadow: "0 12px 25px -5px rgba(0, 0, 0, 0.1)",
-            }}
-            transition={{ duration: 0.2 }}
           >
-            <motion.div
+            <div
+              ref={(el) => (percentageRefs.current[0] = el)}
               className="text-5xl font-bold text-primary mb-2"
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
             >
               92%
-            </motion.div>
+            </div>
             <div className="font-title text-lg font-semibold text-gray-800 mb-2">
               Patient Satisfaction
             </div>
             <p className="text-sm text-gray-600">
               Patients report high satisfaction rates with APh-managed care
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
+          <div
+            ref={(el) => (statCardRefs.current[1] = el)}
             className="bg-white rounded-xl p-6 shadow-md text-center"
-            whileHover={{
-              y: -5,
-              boxShadow: "0 12px 25px -5px rgba(0, 0, 0, 0.1)",
-            }}
-            transition={{ duration: 0.2 }}
           >
-            <motion.div
+            <div
+              ref={(el) => (percentageRefs.current[1] = el)}
               className="text-5xl font-bold text-primary mb-2"
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
             >
               40%
-            </motion.div>
+            </div>
             <div className="font-title text-lg font-semibold text-gray-800 mb-2">
               Reduced Physician Workload
             </div>
             <p className="text-sm text-gray-600">
               Decrease in medication-related physician visits
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
+          <div
+            ref={(el) => (statCardRefs.current[2] = el)}
             className="bg-white rounded-xl p-6 shadow-md text-center"
-            whileHover={{
-              y: -5,
-              boxShadow: "0 12px 25px -5px rgba(0, 0, 0, 0.1)",
-            }}
-            transition={{ duration: 0.2 }}
           >
-            <motion.div
+            <div
+              ref={(el) => (percentageRefs.current[2] = el)}
               className="text-5xl font-bold text-primary mb-2"
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
             >
               45%
-            </motion.div>
+            </div>
             <div className="font-title text-lg font-semibold text-gray-800 mb-2">
               Better Medication Adherence
             </div>
             <p className="text-sm text-gray-600">
               Improvement in medication adherence rates
             </p>
-          </motion.div>
+          </div>
         </div>
 
-        <div className="bg-white rounded-xl p-6 shadow-md">
+        <div ref={quoteBoxRef} className="bg-white rounded-xl p-6 shadow-md">
           <p className="font-body text-center text-gray-600 italic">
             "Advanced Practice Pharmacists represent a significant evolution in
             pharmacy practice, enabling pharmacists to practice at the top of
@@ -338,7 +548,7 @@ const AdvancedPracticePharmacist: React.FC = () => {
             — American College of Clinical Pharmacy
           </p>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

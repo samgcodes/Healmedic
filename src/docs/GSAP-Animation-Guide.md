@@ -5,11 +5,19 @@ This guide explains how to use GSAP (GreenSock Animation Platform) for all anima
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [GSAP Animation Components](#gsap-animation-components)
-3. [GSAP Animation Hooks](#gsap-animation-hooks)
-4. [Migrating from Framer Motion](#migrating-from-framer-motion)
-5. [Migrating from Intersection Observer](#migrating-from-intersection-observer)
-6. [Advanced GSAP Techniques](#advanced-gsap-techniques)
+2. [Core GSAP API](#core-gsap-api)
+3. [GSAP Animation Components](#gsap-animation-components)
+4. [GSAP Animation Hooks](#gsap-animation-hooks)
+5. [Timelines](#timelines)
+6. [ScrollTrigger](#scrolltrigger)
+7. [Easing Functions](#easing-functions)
+8. [Plugins](#plugins)
+9. [Utility Methods](#utility-methods)
+10. [Control Methods](#control-methods)
+11. [Performance Optimization](#performance-optimization)
+12. [Migrating from Framer Motion](#migrating-from-framer-motion)
+13. [Migrating from Intersection Observer](#migrating-from-intersection-observer)
+14. [Advanced GSAP Techniques](#advanced-gsap-techniques)
 
 ## Overview
 
@@ -19,6 +27,46 @@ GSAP is a powerful animation library that offers more flexibility and control th
 - Hover effects
 - Scroll-triggered animations
 - Complex animation sequences
+
+## Core GSAP API
+
+### Basic Tweens
+
+```javascript
+// "to" tween - animate to provided values
+gsap.to(".selector", {
+  // selector, text, Array, or object
+  x: 100, // any properties (not limited to CSS)
+  backgroundColor: "red", // camelCase
+  duration: 1, // seconds
+  delay: 0.5,
+  ease: "power2.inOut",
+  stagger: 0.1, // stagger start times
+  paused: true, // default is false
+  overwrite: "auto", // default is false
+  repeat: 2, // number of repeats (-1 for infinity)
+  repeatDelay: 1, // seconds between repeats
+  repeatRefresh: true, // invalidates on each repeat
+  yoyo: true, // if true > A-B-B-A, if false > A-B-A-B
+  yoyoEase: true, // or ease like "power2"
+  immediateRender: false,
+  onComplete: () => {
+    console.log("finished");
+  },
+  // other callbacks:
+  // onStart, onUpdate, onRepeat, onReverseComplete
+});
+
+// "from" tween - animate from provided values
+gsap.from(".selector", { fromVars });
+
+// "fromTo" tween (define both start and end values)
+gsap.fromTo(".selector", { fromVars }, { toVars });
+// special properties (duration, ease, etc.) go in toVars
+
+// set values immediately (no animation)
+gsap.set(".selector", { toVars });
+```
 
 ## GSAP Animation Components
 
@@ -92,6 +140,56 @@ import { SectionTitle } from "../../components/utils/GSAPAnimations";
 
 <SectionTitle title="Our Services" className="mb-8" />;
 ```
+
+### Stagger1
+
+Staggered content animation with mobile optimization:
+
+```jsx
+import { Stagger1 } from "../../components/utils/GSAPAnimations";
+
+<Stagger1
+  className="space-y-4"
+  delay={0.2}
+  staggerAmount={0.05}
+  mobileOptimized={true}
+  animateOnScroll={false}
+>
+  <h4 className="font-title text-lg font-semibold">Section Title</h4>
+  <p className="font-body text-gray-600">Paragraph content goes here...</p>
+  <ul className="list-disc pl-5 space-y-2">
+    <li>List item 1</li>
+    <li>List item 2</li>
+    <li>List item 3</li>
+  </ul>
+  <div className="bg-blue-50 p-4 rounded-md border-l-4 border-blue-500">
+    <p>Additional information or callout</p>
+  </div>
+</Stagger1>;
+```
+
+#### Props
+
+- `className`: Optional CSS classes
+- `delay`: Delay before animation starts (default: 0)
+- `duration`: Animation duration (default: 0.5)
+- `staggerAmount`: Delay between each element's animation (default: 0.05)
+- `mobileOptimized`: Whether to use simplified animations on mobile (default: true)
+- `animateOnScroll`: Whether to trigger on scroll or immediately (default: false)
+
+#### Element Types
+
+Stagger1 automatically detects and animates:
+
+- Headings (`h1` through `h6`)
+- Paragraphs (`p`)
+- List items (`li`)
+- Info boxes (elements with class `.bg-blue-50` or `.info-box`)
+
+#### Mobile vs Desktop
+
+- **Mobile**: Uses simpler animations with horizontal movement for list items
+- **Desktop**: Uses more sophisticated animations with vertical movement and scale effects
 
 ## GSAP Animation Hooks
 
@@ -195,6 +293,309 @@ const MySection = () => {
     </section>
   );
 };
+```
+
+## Timelines
+
+Timelines allow you to sequence multiple animations and control them as a group.
+
+```javascript
+// Create a timeline
+let tl = gsap.timeline({
+  delay: 0.5,
+  paused: true, // default is false
+  repeat: 2, // number of repeats (-1 for infinity)
+  repeatDelay: 1, // seconds between repeats
+  repeatRefresh: true, // invalidates on each repeat
+  yoyo: true, // if true > A-B-B-A, if false > A-B-A-B
+  defaults: {
+    // children inherit these defaults
+    duration: 1,
+    ease: "none",
+  },
+  smoothChildTiming: true,
+  autoRemoveChildren: true,
+  onComplete: () => {
+    console.log("finished");
+  },
+  // other callbacks:
+  // onStart, onUpdate, onRepeat, onReverseComplete
+});
+
+// Sequence multiple tweens
+tl.to(".selector", { duration: 1, x: 50, y: 0 })
+  .to("#id", { autoAlpha: 0 })
+  .to("elem", { duration: 1, backgroundColor: "red" })
+  .to([elem1, elem2], { duration: 3, x: 100 });
+
+// Position parameter (controls placement)
+tl.to(target, { toVars }, positionParameter);
+0.7; // exactly 0.7 seconds into the timeline (absolute)
+("+=0.7"); // 0.7 seconds after previous animation ends
+("-=0.7"); // overlap with previous by 0.7 seconds
+("myLabel"); // insert at "myLabel" position
+("myLabel+=0.2"); // 0.2 seconds after "myLabel"
+("<"); // align with start of most recently-added child
+("<0.2"); // 0.2 seconds after ^^
+("-=50%"); // overlap half of inserting animation's duration
+("25%"); // 25% into the previous animation (from its start)
+```
+
+### Nesting Timelines
+
+You can create modular animations by nesting timelines:
+
+```javascript
+// Create scene functions that return timelines
+function scene1() {
+  let tl = gsap.timeline();
+  tl.to(...).to(...); // build scene 1
+  return tl;
+}
+
+function scene2() {
+  let tl = gsap.timeline();
+  tl.to(...).to(...); // build scene 2
+  return tl;
+}
+
+// Create master timeline
+let master = gsap.timeline()
+  .add(scene1())
+  .add(scene2(), "-=0.5"); // overlap slightly
+```
+
+## ScrollTrigger
+
+ScrollTrigger enables scroll-based animations:
+
+```javascript
+scrollTrigger: {
+  trigger: ".selector", // selector or element
+  start: "top center", // [trigger] [scroller] positions
+  end: "20px 80%", // [trigger] [scroller] positions
+  // or relative amount: "+=500"
+  scrub: true, // or time (in seconds) to catch up
+  pin: true, // or selector or element to pin
+  markers: true, // only during development!
+  toggleActions: "play pause resume reset",
+  // play actions: complete reverse none
+  toggleClass: "active",
+  fastScrollEnd: true, // or velocity number
+  containerAnimation: tween, // linear animation
+  id: "my-id",
+  anticipatePin: 1, // may help avoid jump
+  snap: {
+    snapTo: 1 / 10, // progress increment
+    // or "labels" or function or Array
+    duration: 0.5,
+    directional: true,
+    ease: "power3",
+    onComplete: callback,
+    // other callbacks: onStart, onInterrupt
+  },
+  pinReparent: true, // moves to documentElement during pin
+  pinSpacing: false,
+  pinType: "transform" // or "fixed"
+  pinnedContainer: ".selector",
+  preventOverlaps: true, // or arbitrary string
+  once: true,
+  endTrigger: ".selector", // selector or element
+  horizontal: true, // switches mode
+  invalidateOnRefresh: true, // clears start values on refresh
+  refreshPriority: 1, // influence refresh order
+  onEnter: callback,
+  // other callbacks:
+  // onLeave, onEnterBack, onLeaveBack, onUpdate,
+  // onToggle, onRefresh, onRefreshInit, onScrubComplete
+}
+```
+
+## Easing Functions
+
+Easing functions control the rate of change during an animation:
+
+```javascript
+// See greensock.com/ease-visualizer
+ease: "none"; // no ease (same as "linear")
+
+// Basic core eases
+"power1", "power2", "power3", "power4", "circ", "expo", "sine";
+// Each has .in, .out, and .inOut extensions
+// i.e. "power1.inOut"
+
+// Expressive core eases
+"elastic", "back", "bounce", "steps(n)";
+
+// In EasePack plugin (not core)
+"rough", "slow", "expoScale(1, 2)";
+
+// Members-only expressive plugins
+CustomEase, CustomWiggle, CustomBounce;
+```
+
+## Plugins
+
+GSAP has a variety of plugins that extend its functionality:
+
+```javascript
+// Register GSAP plugins (once) before using them
+gsap.registerPlugin(Draggable, TextPlugin);
+
+// Available plugins
+Draggable,
+  DrawSVGPlugin,
+  EaselPlugin,
+  Flip,
+  GSDevTools,
+  InertiaPlugin,
+  MorphSVGPlugin,
+  MotionPathPlugin,
+  MotionPathHelper,
+  Observer,
+  Physics2DPlugin,
+  PhysicsPropsPlugin,
+  PixiPlugin,
+  ScrambleTextPlugin,
+  ScrollToPlugin,
+  ScrollTrigger,
+  ScrollSmoother,
+  SplitText,
+  TextPlugin;
+// * available to Club GSAP members: gsap.com/club
+```
+
+## Utility Methods
+
+GSAP provides utility methods to help with common tasks:
+
+```javascript
+// Accessible through gsap.utils.toArray()
+checkPrefix(); // get relevant browser prefix for property
+clamp(); // clamp value to range
+distribute(); // distribute value among array
+getUnit(); // get unit of string
+interpolate(); // interpolate between values
+mapRange(); // map one range to another
+normalize(); // map a range to the 0-1 range
+pipe(); // sequence function calls
+random(); // generates a random value
+selector(); // get a scoped selector function
+shuffle(); // shuffles an array in-place
+snap(); // snap a value to either increment or array
+splitColor(); // splits color into RGB array
+toArray(); // convert array-like thing to array
+unitize(); // adds specified unit to function results
+wrap(); // place number in range, wrapping to start
+wrapYoyo(); // place number in range, wrapping in reverse
+```
+
+## Control Methods
+
+Control methods allow you to manipulate animations after they've been created:
+
+```javascript
+// Retain animation reference to control later
+let anim = gsap.to(...); // or gsap.timeline(...);
+
+// Most methods can be used as getters or setters
+anim.play() // plays forward
+    .pause()
+    .resume() // respects direction
+    .reverse()
+    .restart()
+    .timeScale(2) // 2 = double speed, 0.5 = half speed
+    .seek(1.5) // jump to a time (in seconds) or label
+    .progress(0.5) // jump to halfway
+    .totalProgress(0.8) // includes repeats
+
+// When used as setter, returns animation (chaining)
+
+// Other useful methods (tween and timeline)
+    .kill() // immediately destroy
+    .isActive() // true if currently animating
+    .then() // Promise
+    .invalidate() // clear recorded start/end values
+    .eventCallback() // get/set an event callback
+
+// Timeline-specific methods
+// Add label, tween, timeline, or callback
+    .add(thing, position)
+// Calls function at given point
+    .call(func, params, position)
+// Get an Array of the timeline's children
+    .getChildren()
+// Empties the timeline
+    .clear()
+// Animate playhead to a position linearly
+    .tweenTo(timeOrLabel, {vars})
+// ^^ with both start and end positions
+    .tweenFromTo(from, to, {vars})
+```
+
+## Performance Optimization
+
+GSAP provides tools for optimizing animation performance:
+
+```javascript
+// Add listener with gsap.ticker
+gsap.ticker.add(myFunction);
+function myFunction(time, deltaTime, frame) {
+  // Executes on every tick after
+  // the core engine updates
+}
+// To remove the listener later...
+gsap.ticker.remove(myFunction);
+
+// Faster way to repeatedly set property than .set()
+let setX = gsap.quickSetter("#id", "x", "px");
+document.addEventListener("mousemove", (e) => setX(e.clientX));
+
+// quickTo - for animation!
+let xTo = gsap.quickTo("#id", "x", { duration: 0.4, ease: "power3" });
+document.addEventListener("mousemove", (e) => xTo(e.pageX));
+```
+
+### Effects
+
+Register reusable effects to simplify your code:
+
+```javascript
+// Register an effect for reuse
+gsap.registerEffect({
+  name: "fade",
+  effect: (targets, config) => {
+    return gsap.to(targets, {
+      duration: config.duration,
+      opacity: 0,
+    });
+  },
+  defaults: { duration: 2 },
+  extendTimeline: true,
+});
+
+// Now we can use it like this
+gsap.effects.fade(".box");
+// Or directly on timelines
+tl.fade(".box", { duration: 3 });
+```
+
+### Configuration
+
+Configure GSAP's global settings:
+
+```javascript
+// Configure GSAP's non-tween-related settings
+gsap.config({
+  autoSleep: 60,
+  force3D: false,
+  nullTargetWarn: false,
+  trialWarn: false,
+  units: { left: "%", top: "%", rotation: "rad" },
+});
+
+// Set GSAP's global tween defaults
+gsap.defaults({ ease: "power2.in", duration: 1 });
 ```
 
 ## Migrating from Framer Motion
