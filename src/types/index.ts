@@ -8,6 +8,7 @@
 export interface NavigationItem {
   name: string;
   path: string;
+  icon?: string; // Optional icon name from Phosphor icons
 }
 
 /**
