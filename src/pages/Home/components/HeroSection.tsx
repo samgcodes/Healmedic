@@ -5,13 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 // Hero section data embedded directly in the component
 const heroData = {
-  phrases: [
-    "reimagined",
-    "redefined",
-    "revolutionized",
-    "personalized",
-    "simplified",
-  ],
+  phrases: ["Better", "Fresh", "Smart", "Fast", "Easy"],
   ctaText: "Transfer Now",
   ctaLink: "/contact",
   heroImage: "/assets/heroimg.png",
@@ -79,13 +73,10 @@ const MorphingText: React.FC<MorphingTextProps> = ({
             display: char === " " ? "inline-block" : "inline-block",
             minWidth: char === " " ? "0.5em" : "auto",
             position: "relative",
+            marginRight: "0.15em", // Add space between characters
           }}
         >
           {char === " " ? "\u00A0" : char}
-          <div
-            className="absolute bottom-0 left-0 right-0 h-[2px] bg-white"
-            style={{ transformOrigin: "left" }}
-          />
         </span>
       ))}
     </div>
@@ -99,9 +90,17 @@ const MorphingText: React.FC<MorphingTextProps> = ({
 const HeroSection: React.FC = () => {
   const { phrases, ctaText, ctaLink, heroImage, phraseInterval } = heroData;
   const [currentPhrase, setCurrentPhrase] = useState<number>(0);
+
+  // Refs for elements to animate
+  const sectionRef = useRef<HTMLElement>(null);
+  const titleRef = useRef<HTMLSpanElement>(null);
   const phraseContainerRef = useRef<HTMLDivElement>(null);
-  const heroImageRef = useRef<HTMLImageElement>(null);
+  const paragraphRef = useRef<HTMLParagraphElement>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
+  const heroImageRef = useRef<HTMLImageElement>(null);
+
+  // Refs for decorative elements
   const backgroundCircle1Ref = useRef<HTMLDivElement>(null);
   const backgroundCircle2Ref = useRef<HTMLDivElement>(null);
   const backgroundCircle3Ref = useRef<HTMLDivElement>(null);
@@ -112,14 +111,71 @@ const HeroSection: React.FC = () => {
 
   // Rotate through phrases at the specified interval
   useEffect(() => {
+    // Start cycling phrases
     const interval = setInterval(() => {
       setCurrentPhrase((prev) => (prev + 1) % phrases.length);
     }, phraseInterval);
 
+    // Clean up interval on unmount
     return () => clearInterval(interval);
   }, [phrases, phraseInterval]);
 
-  // Setup animations when component mounts
+  // Run entrance animations immediately on mount
+  useEffect(() => {
+    // Create a timeline with immediate render
+    const tl = gsap.timeline({
+      defaults: { duration: 0.6, ease: "power2.out" },
+      immediateRender: true,
+      overwrite: "auto",
+    });
+
+    // Set initial states for elements (opacity 0)
+    tl.set(titleRef.current, { opacity: 0, y: 30 })
+      .set(phraseContainerRef.current, { opacity: 0, y: 30 })
+      .set(paragraphRef.current, { opacity: 0, y: 20 })
+      .set(buttonRef.current, { opacity: 0, y: 20 })
+      .set(imageContainerRef.current, { opacity: 0, scale: 0.9 })
+      .set(
+        [
+          floatingPill1Ref.current,
+          floatingPill2Ref.current,
+          decorCircle1Ref.current,
+          decorCircle2Ref.current,
+        ],
+        { opacity: 0 }
+      )
+      // Animate title
+      .to(titleRef.current, { opacity: 1, y: 0 })
+      // Animate phrase container
+      .to(phraseContainerRef.current, { opacity: 1, y: 0 }, "-=0.3")
+      // Animate paragraph
+      .to(paragraphRef.current, { opacity: 1, y: 0 }, "-=0.2")
+      // Animate buttons
+      .to(buttonRef.current, { opacity: 1, y: 0 }, "-=0.1")
+      // Animate image
+      .to(imageContainerRef.current, { opacity: 1, scale: 1 }, "-=0.4")
+      // Animate decorative elements
+      .to(
+        [
+          floatingPill1Ref.current,
+          floatingPill2Ref.current,
+          decorCircle1Ref.current,
+          decorCircle2Ref.current,
+        ],
+        { opacity: 1, stagger: 0.1 },
+        "-=0.3"
+      );
+
+    // Force play immediately
+    tl.play(0);
+
+    // Cleanup function
+    return () => {
+      tl.kill();
+    };
+  }, []); // Empty dependency array to run only once on mount
+
+  // Setup ongoing animations
   useEffect(() => {
     // Animate hero image bounce
     if (heroImageRef.current) {
@@ -189,7 +245,6 @@ const HeroSection: React.FC = () => {
         repeat: -1,
         yoyo: true,
         ease: "power1.inOut",
-        delay: 0.5,
       });
     }
 
@@ -263,7 +318,10 @@ const HeroSection: React.FC = () => {
   }, []);
 
   return (
-    <section className="relative bg-gradient-to-br from-[#9a77f6] to-[#8a67e6] text-white overflow-hidden">
+    <section
+      ref={sectionRef}
+      className="relative bg-gradient-to-br from-[#9a77f6] to-[#8a67e6] text-white overflow-hidden"
+    >
       {/* Floating background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div
@@ -285,23 +343,24 @@ const HeroSection: React.FC = () => {
           {/* Text content - centered on mobile */}
           <div className="w-full md:w-3/5 z-10 space-y-fluid-4 mt-6 md:mt-0 px-fluid-2 md:pl-fluid-16">
             <div className="text-center md:text-left mx-auto md:mx-0 max-w-2xl">
-              <h1 className="font-title font-bold tracking-tight">
-                <span className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl">
-                  Pharmacy
-                </span>{" "}
-                <div
-                  ref={phraseContainerRef}
-                  className="inline-block w-full relative overflow-hidden h-[90px] xs:h-[100px] sm:h-[110px] md:h-[130px] text-fluid-4xl sm:text-fluid-5xl"
+              <h1 className="font-title font-bold tracking-tight flex flex-col">
+                <span
+                  ref={titleRef}
+                  className="text-7xl sm:text-7xl md:text-8xl lg:text-9xl tracking-widest"
                 >
-                  <div className="absolute mt-2 left-0 right-0 block">
-                    <MorphingText
-                      text={phrases[currentPhrase]}
-                      className="justify-center md:justify-start"
-                    />
-                  </div>
+                  Pharmacy
+                </span>
+                <div ref={phraseContainerRef} className="w-full py-4">
+                  <MorphingText
+                    text={phrases[currentPhrase]}
+                    className="justify-center md:justify-start text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-extrabold"
+                  />
                 </div>
               </h1>
-              <p className="font-body text-fluid-lg md:text-fluid-xl mt-6 mb-8 opacity-90 max-w-xl leading-relaxed relative z-10">
+              <p
+                ref={paragraphRef}
+                className="font-body text-fluid-lg md:text-fluid-xl mt-6 mb-8 opacity-90 max-w-xl leading-relaxed relative z-10"
+              >
                 <span className=" px-2 py-1 rounded-lg">
                   More than a pharmacy—your partner in health and recovery.
                 </span>{" "}
@@ -353,7 +412,10 @@ const HeroSection: React.FC = () => {
             />
 
             {/* Main image with enhanced container - centered on mobile */}
-            <div className="relative z-10 mx-auto md:mx-0">
+            <div
+              ref={imageContainerRef}
+              className="relative z-10 mx-auto md:mx-0"
+            >
               <img
                 ref={heroImageRef}
                 src={heroImage}

@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { CaretDown } from "@phosphor-icons/react";
+import { gsap } from "gsap";
 
 // Define FAQItem type directly in the component
 interface FAQItemType {
@@ -68,60 +70,195 @@ interface FAQItemProps {
   question: string;
   /** The answer text */
   answer: string;
-  /** Whether the FAQ item should be initially open */
-  isInitiallyOpen?: boolean;
+  /** Whether the FAQ item is open */
+  isOpen: boolean;
+  /** Function to toggle the open state */
+  onToggle: () => void;
 }
 
 /**
  * FAQItem component for individual FAQ items
- * Animations removed for troubleshooting
+ * Enhanced with GSAP animations
  */
 const FAQItem: React.FC<FAQItemProps> = ({
   question,
   answer,
-  isInitiallyOpen = false,
+  isOpen,
+  onToggle,
 }) => {
-  const [isOpen, setIsOpen] = useState<boolean>(isInitiallyOpen);
+  const answerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const iconRef = useRef<HTMLDivElement>(null);
+  const prevIsOpenRef = useRef<boolean>(isOpen);
+  const animationRef = useRef<gsap.core.Timeline | null>(null);
 
-  // Toggle question open/closed
-  const toggleOpen = () => {
-    setIsOpen((prev) => !prev);
-  };
+  // Initialize on mount
+  useEffect(() => {
+    const answerElement = answerRef.current;
+
+    if (!answerElement) return;
+
+    // Set initial state
+    if (!isOpen) {
+      gsap.set(answerElement, {
+        height: 0,
+        opacity: 0,
+        display: "none",
+      });
+    }
+
+    // Update ref for next render
+    prevIsOpenRef.current = isOpen;
+  }, []);
+
+  // Handle animation when isOpen changes
+  useEffect(() => {
+    // Skip animation on initial render
+    if (prevIsOpenRef.current === isOpen) return;
+
+    const answerElement = answerRef.current;
+    const contentElement = contentRef.current;
+    const iconElement = iconRef.current;
+
+    if (!answerElement || !contentElement || !iconElement) return;
+
+    // Kill any existing animation
+    if (animationRef.current) {
+      animationRef.current.kill();
+    }
+
+    // Create a new timeline
+    const tl = gsap.timeline();
+    animationRef.current = tl;
+
+    if (isOpen) {
+      // Opening animation
+
+      // First make it visible with 0 height
+      gsap.set(answerElement, {
+        display: "block",
+        height: "auto",
+        opacity: 0,
+      });
+
+      // Get the natural height
+      const height = answerElement.offsetHeight;
+
+      // Reset to 0 height
+      gsap.set(answerElement, {
+        height: 0,
+      });
+
+      // Animate opening
+      tl.to(
+        iconElement,
+        {
+          rotation: 180,
+          duration: 0.3,
+          ease: "back.out(1.7)",
+        },
+        0
+      )
+        .to(
+          answerElement,
+          {
+            height: height,
+            opacity: 1,
+            duration: 0.4,
+            ease: "power2.out",
+          },
+          0
+        )
+        .fromTo(
+          contentElement,
+          { y: 10, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.3 },
+          0.1
+        );
+    } else {
+      // Closing animation
+
+      // Animate closing
+      tl.to(
+        iconElement,
+        {
+          rotation: 0,
+          duration: 0.3,
+          ease: "back.out(1.7)",
+        },
+        0
+      )
+        .to(
+          contentElement,
+          {
+            y: 10,
+            opacity: 0,
+            duration: 0.2,
+          },
+          0
+        )
+        .to(
+          answerElement,
+          {
+            height: 0,
+            opacity: 0,
+            duration: 0.3,
+            ease: "power2.in",
+            onComplete: () => {
+              gsap.set(answerElement, { display: "none" });
+            },
+          },
+          0.1
+        );
+    }
+
+    // Update ref for next render
+    prevIsOpenRef.current = isOpen;
+  }, [isOpen]);
 
   return (
-    <div className="border-b border-gray-200 py-4 sm:py-5">
+    <div className="border-b border-gray-200 py-5 sm:py-6 hover:bg-[#faf6ff] transition-colors duration-200">
       <button
-        className="flex justify-between items-center w-full text-left focus:outline-none focus:ring-2 focus:ring-[#9a77f6] focus:ring-opacity-50 rounded-md py-2 px-1 touch-manipulation"
-        onClick={toggleOpen}
+        className="flex justify-between items-center w-full text-left focus:outline-none rounded-md py-3 px-4 touch-manipulation group"
+        onClick={onToggle}
         aria-expanded={isOpen}
         aria-controls={`faq-answer-${question
           .replace(/\s+/g, "-")
           .toLowerCase()}`}
       >
-        <span className="font-title text-fluid-lg sm:text-fluid-xl text-gray-700 leading-relaxed pr-4">
+        <span className="font-title text-fluid-lg sm:text-fluid-xl text-gray-800 leading-relaxed pr-4 group-hover:text-[#7c4dff] transition-colors duration-200">
           {question}
         </span>
-        <span
-          className="text-[#9a77f6] text-2xl flex-shrink-0 ml-2"
-          aria-hidden="true"
-          style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+        <div
+          ref={iconRef}
+          className="flex-shrink-0 ml-2"
+          style={{ transform: "rotate(0deg)" }}
         >
-          ▼
-        </span>
+          <CaretDown
+            className="text-[#9a77f6]"
+            size={24}
+            weight="bold"
+            aria-hidden="true"
+          />
+        </div>
       </button>
 
-      {isOpen && (
-        <div
-          id={`faq-answer-${question.replace(/\s+/g, "-").toLowerCase()}`}
-          className="mt-4 text-gray-600 pl-3 sm:pl-4 border-l-2 border-[#9a77f6]"
-        >
-          <div className="bg-[#f0e6ff] p-3 sm:p-4 rounded-md shadow-inner">
+      <div
+        ref={answerRef}
+        id={`faq-answer-${question.replace(/\s+/g, "-").toLowerCase()}`}
+        className="overflow-hidden"
+      >
+        <div className="mt-4 text-gray-600 pl-4 sm:pl-6 border-l-2 border-[#9a77f6]">
+          <div
+            ref={contentRef}
+            className="bg-gradient-to-br from-[#f0e6ff] to-[#f8f4ff] p-4 sm:p-5 rounded-md shadow-inner"
+          >
             <p className="font-body text-fluid-base sm:text-fluid-lg leading-relaxed text-gray-700">
               {answer}
             </p>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
@@ -142,33 +279,194 @@ interface FAQProps {
  * FAQ section component
  *
  * Displays a list of frequently asked questions in an accordion format
- * Animations removed for troubleshooting
  */
 const FAQSection: React.FC<FAQProps> = ({
   title = "Frequently Asked Questions",
   faqItems = FAQ_DATA,
   initialOpenIndex = -1, // -1 means all closed initially
 }) => {
+  const [expandedItems, setExpandedItems] = useState<number[]>(
+    initialOpenIndex >= 0 ? [initialOpenIndex] : []
+  );
+  const [allExpanded, setAllExpanded] = useState<boolean>(false);
+  const expandButtonRef = useRef<HTMLDivElement>(null);
+  const prevAllExpandedRef = useRef<boolean>(allExpanded);
+
+  // Toggle expand/collapse all
+  const toggleExpandAll = () => {
+    if (allExpanded) {
+      setExpandedItems([]);
+      setAllExpanded(false);
+    } else {
+      setExpandedItems(faqItems.map((_, index) => index));
+      setAllExpanded(true);
+    }
+  };
+
+  // Individual item toggle
+  const toggleItem = (index: number) => {
+    setExpandedItems((prev) => {
+      if (prev.includes(index)) {
+        return prev.filter((i) => i !== index);
+      } else {
+        return [...prev, index];
+      }
+    });
+  };
+
+  // Update allExpanded state when expandedItems changes
+  useEffect(() => {
+    setAllExpanded(expandedItems.length === faqItems.length);
+  }, [expandedItems, faqItems.length]);
+
+  // Animate the expand/collapse button when allExpanded changes
+  useEffect(() => {
+    if (prevAllExpandedRef.current === allExpanded) return;
+
+    if (expandButtonRef.current) {
+      gsap.to(expandButtonRef.current, {
+        rotation: allExpanded ? 180 : 0,
+        duration: 0.3,
+        ease: "back.out(1.7)",
+      });
+    }
+
+    prevAllExpandedRef.current = allExpanded;
+  }, [allExpanded]);
+
+  // Refs for entrance animation
+  const sectionRef = useRef<HTMLElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const controlsRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const faqItemsRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Set up entrance animation with ScrollTrigger
+  useEffect(() => {
+    if (
+      !sectionRef.current ||
+      !titleRef.current ||
+      !controlsRef.current ||
+      !containerRef.current
+    )
+      return;
+
+    // Set initial state (invisible)
+    gsap.set(titleRef.current, { opacity: 0, y: 30 });
+    gsap.set(controlsRef.current, { opacity: 0, y: 20 });
+    gsap.set(containerRef.current, { opacity: 0, y: 30 });
+
+    // Create a timeline for the entrance animation
+    const sectionTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top bottom-=100", // Start animation when top of section is 100px from bottom of viewport
+        toggleActions: "play none none none", // Play once when enters view
+      },
+    });
+
+    // Animate title
+    sectionTl.to(titleRef.current, {
+      y: 0,
+      opacity: 1,
+      duration: 0.6,
+      ease: "power2.out",
+    });
+
+    // Animate controls
+    sectionTl.to(
+      controlsRef.current,
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.4,
+        ease: "power2.out",
+      },
+      "-=0.3"
+    ); // Slight overlap with previous animation
+
+    // Animate FAQ container
+    sectionTl.to(
+      containerRef.current,
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.5,
+        ease: "power2.out",
+      },
+      "-=0.2"
+    );
+
+    // Staggered animation for FAQ items
+    const faqItems = faqItemsRef.current.filter((item) => item !== null);
+    if (faqItems.length > 0) {
+      sectionTl.fromTo(
+        faqItems,
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          stagger: 0.08, // 0.08s delay between each item
+          duration: 0.4,
+          ease: "power2.out",
+        },
+        "-=0.3"
+      );
+    }
+
+    // Cleanup
+    return () => {
+      if (sectionTl.scrollTrigger) {
+        sectionTl.scrollTrigger.kill();
+      }
+      sectionTl.kill();
+    };
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       className="py-12 sm:py-16 bg-[#FDF8EC]"
       aria-labelledby="faq-heading"
     >
-      <div className="max-w-6xl mx-auto px-fluid-4">
+      <div className="max-w-7xl mx-auto px-fluid-4">
         <h2
+          ref={titleRef}
           id="faq-heading"
           className="font-title text-fluid-3xl sm:text-fluid-4xl font-semibold text-center mb-8 sm:mb-12 text-gray-800"
         >
           {title}
         </h2>
-        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 md:p-8">
+
+        <div ref={controlsRef} className="flex justify-end mb-4">
+          <button
+            onClick={toggleExpandAll}
+            className="text-[#9a77f6] hover:text-[#7c4dff] font-medium flex items-center gap-2 px-4 py-2 rounded-md hover:bg-[#f0e6ff] transition-colors duration-200"
+          >
+            <span>{allExpanded ? "Collapse All" : "Expand All"}</span>
+            <div
+              ref={expandButtonRef}
+              className="text-sm"
+              style={{ transform: "rotate(0deg)" }}
+            >
+              <CaretDown size={16} weight="bold" />
+            </div>
+          </button>
+        </div>
+
+        <div
+          ref={containerRef}
+          className="bg-white rounded-lg shadow-lg p-5 sm:p-7 md:p-9"
+        >
           {faqItems.map((item: FAQItemType, index: number) => (
-            <FAQItem
-              key={index}
-              question={item.question}
-              answer={item.answer}
-              isInitiallyOpen={index === initialOpenIndex}
-            />
+            <div key={index} ref={(el) => (faqItemsRef.current[index] = el)}>
+              <FAQItem
+                question={item.question}
+                answer={item.answer}
+                isOpen={expandedItems.includes(index)}
+                onToggle={() => toggleItem(index)}
+              />
+            </div>
           ))}
         </div>
       </div>

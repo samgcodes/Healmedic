@@ -265,11 +265,11 @@ const WhyChooseSection: React.FC = () => {
   }, []);
 
   return (
-    <section className="py-16 md:py-24 bg-[#f0ebff] relative">
+    <section className="py-10 md:py-16 bg-[#f0ebff] relative rounded-t-3xl rounded-b-3xl">
       <div className="relative">
-        <div className="py-8 md:py-12">
+        <div className="py-6 md:py-8">
           <div className="container-wide mx-auto px-6 md:px-8">
-            <div className="text-center mb-16">
+            <div className="text-center mb-10">
               <h2 className="heading-2 text-primary mb-6 font-title">
                 {whyChooseData.headline}
               </h2>
@@ -279,7 +279,7 @@ const WhyChooseSection: React.FC = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
               {whyChooseData.points.map((point) => (
                 <div
                   key={point.title}
