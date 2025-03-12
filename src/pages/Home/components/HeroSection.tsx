@@ -338,7 +338,7 @@ const HeroSection: React.FC = () => {
         />
       </div>
       {/* Main content container */}
-      <div className="max-w-[1400px] mx-auto h-full px-fluid-4 pt-16 sm:pt-24 md:pt-28">
+      <div className="max-w-[1400px] mx-auto h-full px-fluid-4 pt-20 sm:pt-24 md:pt-28">
         <div className="flex flex-col-reverse md:flex-row min-h-[calc(100vh-7rem)] items-center justify-center">
           {/* Text content - centered on mobile */}
           <div className="w-full md:w-3/5 z-10 space-y-fluid-4 -mt-4 sm:mt-0 md:mt-0 px-fluid-2 md:pl-fluid-16">
