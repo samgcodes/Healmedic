@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import {
@@ -158,6 +158,10 @@ const Navbar: React.FC = () => {
   const isTablet = useMediaQuery(breakpoints.tablet);
   const isDesktop = useMediaQuery(breakpoints.desktop);
 
+  // Refs for detecting clicks outside
+  const navbarRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+
   // Handle scroll events
   useEffect(() => {
     const updateScroll = (): void => {
@@ -176,6 +180,37 @@ const Navbar: React.FC = () => {
       document.body.style.overflow = "unset";
     }
   }, [isOpen]);
+
+  // Handle clicks outside of the navbar to close menus
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      // For desktop menu
+      if (
+        navbarRef.current &&
+        !navbarRef.current.contains(event.target as Node) &&
+        isDesktopMenuOpen
+      ) {
+        setIsDesktopMenuOpen(false);
+      }
+
+      // For mobile menu - only check if menu is open
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target as Node) &&
+        isOpen
+      ) {
+        setIsOpen(false);
+      }
+    }
+
+    // Add event listener
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Clean up
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isDesktopMenuOpen, isOpen]);
 
   // Get navbar width based on screen size and scroll state
   const getNavbarWidth = () => {
@@ -207,6 +242,7 @@ const Navbar: React.FC = () => {
           }}
         >
           <motion.div
+            ref={navbarRef}
             className="bg-[#5D3B9C] rounded-[24px] sm:rounded-[32px] shadow-[0_8px_32px_0_rgba(93,59,156,0.25)] relative overflow-hidden"
             initial="closed"
             animate={isDesktopMenuOpen ? "open" : "closed"}
@@ -303,6 +339,7 @@ const Navbar: React.FC = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            ref={mobileMenuRef}
             className="fixed inset-x-0 top-0 h-screen bg-[#5D3B9C]/95 backdrop-blur-sm z-40 md:hidden"
             initial="closed"
             animate="open"

@@ -125,10 +125,7 @@ const ImpactSection: React.FC<ImpactSectionProps> = ({ impactData }) => {
   }, [isInitialLoad, impactData]);
 
   return (
-    <div
-      ref={sectionRef}
-      className="mb-10 bg-gradient-to-br from-white to-primary/5 rounded-xl p-4 sm:p-6 lg:p-8 shadow-lg"
-    >
+    <div ref={sectionRef} className="mb-10  rounded-xl p-4 sm:p-6 lg:p-8 ">
       <h3
         ref={titleRef}
         className="font-title text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-center text-gray-800"

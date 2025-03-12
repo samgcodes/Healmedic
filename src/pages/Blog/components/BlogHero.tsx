@@ -1,12 +1,17 @@
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+// Register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
+
+// Main component
 const BlogHero: React.FC = () => {
   // Create refs for the elements we want to animate
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
 
+  // Text animation effect
   useEffect(() => {
     // Ensure refs are attached before animating
     if (!titleRef.current || !subtitleRef.current) return;
@@ -65,9 +70,10 @@ const BlogHero: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative" ref={containerRef}>
+    <div className="relative">
       {/* Purple background with straight edge bottom */}
       <div className="bg-gradient-to-br from-primary to-[#7c5ae0] pt-32 pb-16 md:pt-40 md:pb-20 flex items-center justify-center">
+        {/* Content container */}
         <div className="container-narrow text-center text-white relative z-10">
           <h1 ref={titleRef} className="heading-2 mb-4">
             Health & Wellness Blog

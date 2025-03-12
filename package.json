@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@phosphor-icons/react": "^2.1.7",
     "@react-three/drei": "^10.0.4",
     "@react-three/fiber": "^9.1.0",
     "chart.js": "^4.4.8",

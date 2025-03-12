@@ -1,7 +1,13 @@
 import React from "react";
-import Hero from "../../components/sections/Hero";
-import WhyUs from "../../components/sections/WhyUs";
-import FAQ from "../../components/sections/FAQ";
+import {
+  HeroSection,
+  WelcomeSection,
+  WhyChooseSection,
+  ServicesSection,
+  ResourcesSection,
+  CallToActionSection,
+  FAQSection,
+} from "./components";
 
 /**
  * Home page component
@@ -11,11 +17,13 @@ import FAQ from "../../components/sections/FAQ";
 const Home: React.FC = () => {
   return (
     <div>
-      <Hero />
-      <WhyUs />
-      <FAQ />
-
-      {/* Add other sections here */}
+      <HeroSection />
+      <WelcomeSection />
+      <WhyChooseSection />
+      <ServicesSection />
+      <ResourcesSection />
+      <CallToActionSection />
+      <FAQSection />
     </div>
   );
 };
