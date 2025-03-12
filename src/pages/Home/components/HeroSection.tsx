@@ -346,7 +346,7 @@ const HeroSection: React.FC = () => {
               <h1 className="font-title font-bold tracking-tight flex flex-col">
                 <span
                   ref={titleRef}
-                  className="text-7xl sm:text-7xl md:text-8xl lg:text-9xl tracking-widest"
+                  className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl tracking-widest text-center md:text-left"
                 >
                   Pharmacy
                 </span>
