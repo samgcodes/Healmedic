@@ -5,7 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 // Hero section data embedded directly in the component
 const heroData = {
-  phrases: ["Better", "Fresh", "Smart", "Fast", "Easy"],
+  phrases: ["better", "easy", "smart", "fast", "simple"],
   ctaText: "Transfer Now",
   ctaLink: "/contact",
   heroImage: "/assets/heroimg.png",
