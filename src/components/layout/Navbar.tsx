@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence, Variants } from "framer-motion";
+import { List, X } from "@phosphor-icons/react";
 import {
   MENU_ITEMS,
   SECONDARY_MENU_ITEMS,
@@ -124,26 +125,17 @@ const MenuButton: React.FC<MenuButtonProps> = ({
 }) => (
   <button
     onClick={onClick}
-    className={`inline-flex items-center justify-center p-3 rounded-md text-white hover:text-opacity-80 focus:outline-none transition-all duration-200 ${
+    className={`flex items-center justify-center w-10 h-10 rounded-md text-white hover:text-opacity-80 focus:outline-none transition-all duration-200 ${
       isMobile ? "touch-manipulation" : ""
     }`}
-    aria-label="Menu"
+    aria-label={isOpen ? "Close menu" : "Open menu"}
     aria-expanded={isOpen}
   >
-    <svg
-      className={isMobile ? "h-7 w-7" : "h-7 w-7"}
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
-      />
-    </svg>
+    {isOpen ? (
+      <X weight="bold" className="w-6 h-6" />
+    ) : (
+      <List weight="bold" className="w-6 h-6" />
+    )}
   </button>
 );
 
@@ -261,7 +253,7 @@ const Navbar: React.FC = () => {
                     />
                   </div>
                   {/* Mobile hamburger button */}
-                  <div className="md:hidden">
+                  <div className="md:hidden flex items-center justify-center">
                     <MenuButton
                       isOpen={isOpen}
                       onClick={() => setIsOpen(!isOpen)}
